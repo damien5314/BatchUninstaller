@@ -1,0 +1,4 @@
+<resources>
+  <item name="app_name" type="id" />
+  <item name="app_icon" type="id" />
+</resources>
