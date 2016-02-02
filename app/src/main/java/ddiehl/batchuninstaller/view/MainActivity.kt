@@ -120,6 +120,8 @@ class MainActivity : AppCompatActivity(), MainView {
     if (data != null) {
       val successful = data.extras.get(EXTRA_INSTALL_RESULT) == 1
       mMainPresenter.onItemUninstalled(successful)
+    } else {
+      mMainPresenter.onItemUninstalled(false)
     }
   }
 
