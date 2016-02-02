@@ -7,4 +7,6 @@ interface MainView {
   fun dismissSpinner()
   fun getPackageManager(): PackageManager
   fun notifyDataSetChanged()
+  fun activateSelectionMode()
+  fun onDataUpdated(index: Int)
 }

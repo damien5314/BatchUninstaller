@@ -57,38 +57,17 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
         .doOnTerminate { mMainView.dismissSpinner() }
         .subscribe({
           mData = it
-          mMainView.notifyDataSetChanged()
+//          mMainView.notifyDataSetChanged()
           calculateApplicationSize()
           Timber.d("Loaded data (%s)", mData.size)
         })
   }
 
   private fun calculateApplicationSize() {
-    var counter = 0
-    mData.forEach { app ->
-      getAppPackageSize(app,
-          { ps, b ->
-            if (b && ps != null) {
-              app.size =
-                  ps.cacheSize
-              + ps.codeSize
-              + ps.dataSize
-              + ps.externalCacheSize
-              + ps.externalCodeSize
-              + ps.externalDataSize
-              + ps.externalMediaSize
-              + ps.externalObbSize
-              Timber.d("%s -> %s bytes", app.name, app.size)
-            }
-            counter++
-            if (counter == mData.size) {
-              mMainView.notifyDataSetChanged()
-            }
-          })
-    }
+    mData.forEach { getAppPackageSize(it) }
   }
 
-  private fun getAppPackageSize(app: App, onGetStatsCompleted: (PackageStats?, Boolean) -> Unit) {
+  private fun getAppPackageSize(app: App) {
     try {
       val clz = mMainView.getPackageManager().javaClass
       val myUserId: Method = UserHandle::class.java
@@ -102,13 +81,29 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
           IPackageStatsObserver::class.java);
       getPackageSizeInfo.invoke(mMainView.getPackageManager(), app.packageName, userID,
           object : IPackageStatsObserver.Stub() {
-            override fun onGetStatsCompleted(pStats: PackageStats?, succeeded: Boolean) {
-              onGetStatsCompleted.invoke(pStats, succeeded)
+            override fun onGetStatsCompleted(ps: PackageStats?, succeeded: Boolean) {
+              if (succeeded && ps != null) {
+                app.size =
+                    ps.cacheSize +
+                    ps.codeSize +
+                    ps.dataSize +
+                    ps.externalCacheSize +
+                    ps.externalCodeSize +
+                    ps.externalDataSize +
+                    ps.externalMediaSize +
+                    ps.externalObbSize
+                mMainView.onDataUpdated(
+                    mData.indexOf(app))
+              }
             }
           });
     } catch (ex: Exception) {
       Timber.e(ex, "An error occurred");
       throw ex;
     }
+  }
+
+  override fun onItemSelected(position: Int) {
+    mMainView.activateSelectionMode()
   }
 }

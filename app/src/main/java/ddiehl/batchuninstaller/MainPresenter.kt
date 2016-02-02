@@ -5,4 +5,5 @@ interface MainPresenter {
   fun onPause(): Unit
   fun getNumItems(): Int
   fun getItemAt(position: Int): App
+  fun onItemSelected(position: Int)
 }
