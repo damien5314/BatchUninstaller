@@ -33,7 +33,6 @@ class MainActivity : AppCompatActivity(), MainView {
     mLoadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
     mLoadingOverlay?.setCancelable(false)
     mLoadingOverlay?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-    showSpinner()
     loadData()
   }
 
@@ -48,7 +47,6 @@ class MainActivity : AppCompatActivity(), MainView {
           packageSet.add(it.packageName)
         }
       }
-      Thread.sleep(1000)
       subscriber.onNext(
           packageSet.map {
             App(
@@ -61,14 +59,13 @@ class MainActivity : AppCompatActivity(), MainView {
     }
         .subscribeOn(Schedulers.computation())
         .observeOn(AndroidSchedulers.mainThread())
+        .doOnSubscribe { showSpinner() }
+        .doOnTerminate { dismissSpinner() }
         .subscribe({
-          dismissSpinner()
           mData = it
-          Timber.d("Loaded data (%s)", mData.size)
           mAdapter.notifyDataSetChanged()
-        },
-            { },
-            { dismissSpinner() })
+          Timber.d("Loaded data (%s)", mData.size)
+        })
   }
 
   override fun getNumItems(): Int = mData.size
@@ -82,7 +79,7 @@ class MainActivity : AppCompatActivity(), MainView {
   }
 
   override fun dismissSpinner() {
-    if (mLoadingOverlay!!.isShowing) {
+    if (mLoadingOverlay != null && mLoadingOverlay!!.isShowing) {
       mLoadingOverlay?.dismiss();
     }
   }
