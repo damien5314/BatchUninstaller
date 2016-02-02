@@ -3,9 +3,11 @@ package ddiehl.batchuninstaller.view
 import ddiehl.batchuninstaller.model.App
 
 interface MainPresenter {
-  fun onResume(): Unit
-  fun onPause(): Unit
+  fun onStart(): Unit
+  fun onStop(): Unit
   fun getNumItems(): Int
   fun getItemAt(position: Int): App
   fun onItemSelected(position: Int)
+  fun onClickedBatchUninstall()
+  fun onItemUninstalled(success: Boolean)
 }

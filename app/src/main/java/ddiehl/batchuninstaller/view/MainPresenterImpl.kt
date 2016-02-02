@@ -15,7 +15,9 @@ import java.util.*
 
 class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
 
-  private var mData: MutableList<App> = ArrayList()
+  private val mData: MutableList<App> = ArrayList()
+  private val mUninstallQueue = LinkedList<App>()
+  private var mUninstallApp: App? = null
 
   override fun getNumItems(): Int = mData.size
 
@@ -23,12 +25,12 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
     return mData[position]
   }
 
-  override fun onResume() {
+  override fun onStart() {
     if (mData.isEmpty()) loadApplicationData()
   }
 
-  override fun onPause() {
-    mData.clear()
+  override fun onStop() {
+
   }
 
   private fun loadApplicationData() {
@@ -57,10 +59,9 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
         .doOnSubscribe { mMainView.showSpinner() }
         .doOnTerminate { mMainView.dismissSpinner() }
         .subscribe({
-          mData = it
-//          mMainView.notifyDataSetChanged()
+          mData.clear()
+          mData.addAll(it)
           calculateApplicationSize()
-          Timber.d("Loaded data (%s)", mData.size)
         })
   }
 
@@ -106,5 +107,25 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
 
   override fun onItemSelected(position: Int) {
     mMainView.activateSelectionMode()
+  }
+
+  override fun onClickedBatchUninstall() {
+    val apps = mMainView.getSelectedPositions().map { mData[it] }
+    mUninstallQueue.addAll(apps)
+    processQueue()
+  }
+
+  override fun onItemUninstalled(success: Boolean) {
+    if (success) {
+      mData.remove(mUninstallApp)
+      mMainView.notifyDataSetChanged()
+    }
+    processQueue()
+  }
+
+  private fun processQueue() {
+    if (mUninstallQueue.isEmpty()) return
+    mUninstallApp = mUninstallQueue.pop()
+    mMainView.showUninstallForPackage(mUninstallApp!!.packageName)
   }
 }

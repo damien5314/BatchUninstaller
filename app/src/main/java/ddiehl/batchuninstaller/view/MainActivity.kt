@@ -1,6 +1,7 @@
 package ddiehl.batchuninstaller.view
 
 import android.app.ProgressDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
@@ -10,9 +11,8 @@ import android.view.Menu
 import android.view.MenuItem
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
-import ddiehl.batchuninstaller.view.MainPresenter
-import ddiehl.batchuninstaller.view.MainPresenterImpl
 import ddiehl.batchuninstaller.R
+import ddiehl.batchuninstaller.utils.getUninstallIntent
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.find
@@ -20,6 +20,11 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.setContentView
 import timber.log.Timber
 
+/**
+ * TODO
+ * Implement a broadcast receiver for android.intent.action.PACKAGE_REMOVED
+ *   to capture uninstall events
+ */
 class MainActivity : AppCompatActivity(), MainView {
 
   private val mMainPresenter: MainPresenter = MainPresenterImpl(this)
@@ -28,32 +33,6 @@ class MainActivity : AppCompatActivity(), MainView {
   private lateinit var mRecyclerView: RecyclerView
   private val mMultiSelector: MultiSelector = MultiSelector()
   private lateinit var mAdapter: AppAdapter
-
-  private val mSelectedMode: ActionMode.Callback =
-      object: ModalMultiSelectorCallback(mMultiSelector) {
-        override fun onCreateActionMode(actionMode: ActionMode?, menu: Menu?): Boolean {
-          super.onCreateActionMode(actionMode, menu)
-          this@MainActivity.menuInflater.inflate(R.menu.context_menu, menu)
-          mMultiSelector.isSelectable = true
-          return true
-        }
-
-        override fun onActionItemClicked(
-            mode: ActionMode, item: MenuItem?): Boolean {
-          when (item!!.itemId) {
-            R.id.action_uninstall -> {
-              mode.finish()
-              val positions = mMultiSelector.selectedPositions
-              positions.forEach {
-                Timber.d("Item uninstalled: " + mMainPresenter.getItemAt(it))
-              }
-              mMultiSelector.clearSelections()
-              return true
-            }
-            else -> return false
-          }
-        }
-      }
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -66,14 +45,14 @@ class MainActivity : AppCompatActivity(), MainView {
     mLoadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
   }
 
-  override fun onResume() {
-    super.onResume()
-    mMainPresenter.onResume()
+  override fun onStart() {
+    super.onStart()
+    mMainPresenter.onStart()
   }
 
-  override fun onPause() {
-    mMainPresenter.onPause()
-    super.onPause()
+  override fun onStop() {
+    mMainPresenter.onStop()
+    super.onStop()
   }
 
   override fun showSpinner() {
@@ -94,8 +73,54 @@ class MainActivity : AppCompatActivity(), MainView {
     runOnUiThread { mAdapter.notifyItemChanged(index) }
   }
 
+  private val mSelectedMode: ActionMode.Callback =
+      object: ModalMultiSelectorCallback(mMultiSelector) {
+        override fun onCreateActionMode(actionMode: ActionMode?, menu: Menu?): Boolean {
+          super.onCreateActionMode(actionMode, menu)
+          this@MainActivity.menuInflater.inflate(R.menu.context_menu, menu)
+          mMultiSelector.isSelectable = true
+          return true
+        }
+
+        override fun onActionItemClicked(
+            mode: ActionMode, item: MenuItem?): Boolean {
+          when (item!!.itemId) {
+            R.id.action_uninstall -> {
+              mode.finish()
+              val positions = mMultiSelector.selectedPositions
+              mMainPresenter.onClickedBatchUninstall()
+              positions.forEach {
+                Timber.d("Item uninstalled: " + mMainPresenter.getItemAt(it))
+              }
+              mMultiSelector.clearSelections()
+              return true
+            }
+            else -> return false
+          }
+        }
+      }
+
+  override fun getSelectedPositions(): List<Int> {
+    return mMultiSelector.selectedPositions
+  }
+
   override fun activateSelectionMode() {
     startSupportActionMode(mSelectedMode)
+  }
+
+  override fun showUninstallForPackage(packageName: String) {
+    startActivityForResult(
+        getUninstallIntent(packageName, true), 0)
+  }
+
+  private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
+
+  override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    super.onActivityResult(requestCode, resultCode, data)
+    if (data != null) {
+      val successful = data.extras.get(EXTRA_INSTALL_RESULT) == 1
+      mMainPresenter.onItemUninstalled(successful)
+    }
   }
 
   private class UI : AnkoComponent<MainActivity> {

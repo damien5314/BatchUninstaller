@@ -9,4 +9,6 @@ interface MainView {
   fun notifyDataSetChanged()
   fun activateSelectionMode()
   fun onDataUpdated(index: Int)
+  fun getSelectedPositions(): List<Int>
+  fun showUninstallForPackage(packageName: String)
 }
