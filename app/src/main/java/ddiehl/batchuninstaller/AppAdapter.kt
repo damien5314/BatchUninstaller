@@ -26,10 +26,12 @@ class AppAdapter(val view: MainView) : RecyclerView.Adapter<RecyclerView.ViewHol
 private class VH(val view: View) : RecyclerView.ViewHolder(view) {
   val context = view.context.applicationContext
   val name = view.find<TextView>(R.id.app_name)
+  val size = view.find<TextView>(R.id.app_size)
   val icon = view.find<ImageView>(R.id.app_icon)
 
   fun bind(app: App) {
     name.text = app.name
+    size.text = app.size.toString()
     icon.setImageDrawable(
         view.context.packageManager.getApplicationIcon(app.packageName))
   }
@@ -37,8 +39,13 @@ private class VH(val view: View) : RecyclerView.ViewHolder(view) {
   class UI : AnkoComponent<AppAdapter> {
     override fun createView(ui: AnkoContext<AppAdapter>): View = ui.apply {
       linearLayout {
-        textView {
-          id = R.id.app_name
+        verticalLayout {
+          textView {
+            id = R.id.app_name
+          }
+          textView {
+            id = R.id.app_size
+          }
           lparams {
             width = dip(0)
             weight = 1.0f
