@@ -1,5 +1,6 @@
 package ddiehl.batchuninstaller.view
 
+import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -7,7 +8,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.SwappingHolder
-import ddiehl.batchuninstaller.view.MainPresenter
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.App
 import ddiehl.batchuninstaller.utils.formatFileSize
@@ -70,9 +70,13 @@ class AppAdapter(
           verticalLayout {
             textView {
               id = R.id.app_name
+              setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
+              textColor = ContextCompat.getColor(ui.ctx, R.color.primary_text)
             }
             textView {
               id = R.id.app_size
+              setTextAppearance(R.style.TextAppearance_AppCompat_Small)
+              textColor = ContextCompat.getColor(ui.ctx, R.color.secondary_text)
             }
             lparams {
               width = dip(0)
