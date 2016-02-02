@@ -1,8 +1,10 @@
 package ddiehl.batchuninstaller;
 
+import android.content.pm.PackageManager
+
 interface MainView {
-  fun getNumItems(): Int
-  fun getItemAt(position: Int): App
   fun showSpinner()
   fun dismissSpinner()
+  fun getPackageManager(): PackageManager
+  fun notifyDataSetChanged()
 }

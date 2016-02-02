@@ -7,11 +7,11 @@ import android.widget.ImageView
 import android.widget.TextView
 import org.jetbrains.anko.*
 
-class AppAdapter(val view: MainView) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AppAdapter(val mPresenter: MainPresenter) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
   override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
     (holder as VH).bind(
-        view.getItemAt(position))
+        mPresenter.getItemAt(position))
   }
 
   override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
@@ -20,19 +20,18 @@ class AppAdapter(val view: MainView) : RecyclerView.Adapter<RecyclerView.ViewHol
             parent!!.context, this)))
   }
 
-  override fun getItemCount(): Int = view.getNumItems()
+  override fun getItemCount(): Int = mPresenter.getNumItems()
 }
 
 private class VH(val view: View) : RecyclerView.ViewHolder(view) {
-  val context = view.context.applicationContext
-  val name = view.find<TextView>(R.id.app_name)
-  val size = view.find<TextView>(R.id.app_size)
-  val icon = view.find<ImageView>(R.id.app_icon)
+  val mName = view.find<TextView>(R.id.app_name)
+  val mSize = view.find<TextView>(R.id.app_size)
+  val mIcon = view.find<ImageView>(R.id.app_icon)
 
   fun bind(app: App) {
-    name.text = app.name
-    size.text = app.size.toString()
-    icon.setImageDrawable(
+    mName.text = app.name
+    mSize.text = formatFileSize(app.size, view.context)
+    mIcon.setImageDrawable(
         view.context.packageManager.getApplicationIcon(app.packageName))
   }
 

@@ -1,12 +1,7 @@
 package ddiehl.batchuninstaller
 
 import android.app.ProgressDialog
-import android.content.pm.IPackageStatsObserver
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
-import android.content.pm.PackageStats
 import android.os.Bundle
-import android.os.UserHandle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
@@ -15,126 +10,46 @@ import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import org.jetbrains.anko.setContentView
-import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.observable
-import rx.schedulers.Schedulers
-import timber.log.Timber
-import java.lang.reflect.Method
-import java.util.*
 
 class MainActivity : AppCompatActivity(), MainView {
 
-  private var mLoadingOverlay: ProgressDialog? = null
-  private var mData: List<App> = emptyList()
-  private var mRecyclerView: RecyclerView? = null
-  private val mAdapter: AppAdapter = AppAdapter(this)
+  private lateinit var mLoadingOverlay: ProgressDialog
+  private lateinit var mRecyclerView: RecyclerView
+  private val mMainPresenter: MainPresenter = MainPresenterImpl(this)
+  private val mAdapter: AppAdapter = AppAdapter(mMainPresenter)
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     UI().setContentView(this)
     mRecyclerView = find<RecyclerView>(R.id.recycler_view)
-    mRecyclerView?.adapter = mAdapter
+    mRecyclerView.adapter = mAdapter
     mLoadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
-    mLoadingOverlay?.setCancelable(false)
-    mLoadingOverlay?.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-    loadApplicationData()
+    mLoadingOverlay.setCancelable(false)
+    mLoadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
   }
 
-  private fun loadApplicationData() {
-    observable<List<App>> { subscriber ->
-      val packageList: List<PackageInfo>
-          = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES)
-      val packageSet: MutableSet<String> = HashSet()
-      packageList.forEach {
-        val intent = packageManager.getLaunchIntentForPackage(it.packageName)
-        if (intent != null && !it.packageName.startsWith("com.android")) {
-          packageSet.add(it.packageName)
-        }
-      }
-      subscriber.onNext(
-          packageSet.map {
-            App(
-                packageManager.getApplicationLabel(packageManager.getApplicationInfo(it, 0)),
-                0, // TODO Calculate size of app
-                it
-            )
-          })
-      subscriber.onCompleted()
-    }
-        .subscribeOn(Schedulers.computation())
-        .observeOn(AndroidSchedulers.mainThread())
-        .doOnSubscribe { showSpinner() }
-        .doOnTerminate { dismissSpinner() }
-        .subscribe({
-          mData = it
-          mAdapter.notifyDataSetChanged()
-          calculateApplicationSize()
-          Timber.d("Loaded data (%s)", mData.size)
-        })
+  override fun onResume() {
+    super.onResume()
+    mMainPresenter.onResume()
   }
 
-  private fun calculateApplicationSize() {
-    var counter = 0
-    mData.forEach { app ->
-      getAppPackageSize(app,
-          { ps, b ->
-            if (b && ps != null) {
-              app.size =
-                  ps.cacheSize
-              + ps.codeSize
-              + ps.dataSize
-              + ps.externalCacheSize
-              + ps.externalCodeSize
-              + ps.externalDataSize
-              + ps.externalMediaSize
-              + ps.externalObbSize
-              Timber.d("%s -> %s bytes", app.name, app.size)
-            }
-            counter += 1
-            if (counter == mData.size) {
-              mAdapter.notifyDataSetChanged()
-            }
-          })
-    }
-  }
-
-  public fun getAppPackageSize(app: App, onGetStatsCompleted: (PackageStats?, Boolean) -> Unit) {
-    try {
-      val clz = packageManager.javaClass
-      val myUserId: Method = UserHandle::class.java
-          .getDeclaredMethod("myUserId"); //ignore check this when u set ur min SDK < 17
-      val userID: Int = myUserId.invoke(packageManager) as Int;
-      val clzInt = javaClass<Int>()
-      val getPackageSizeInfo: Method = clz.getDeclaredMethod(
-          "getPackageSizeInfo",
-          String::class.java,
-          clzInt,
-          IPackageStatsObserver::class.java);
-      getPackageSizeInfo.invoke(packageManager, app.packageName, userID, object : IPackageStatsObserver.Stub() {
-        override fun onGetStatsCompleted(pStats: PackageStats?, succeeded: Boolean) {
-          onGetStatsCompleted.invoke(pStats, succeeded)
-        }
-      });
-    } catch (ex: Exception) {
-      Timber.e(ex, "An error occurred");
-      throw ex;
-    }
-  }
-
-  override fun getNumItems(): Int = mData.size
-
-  override fun getItemAt(position: Int): App {
-    return mData[position]
+  override fun onPause() {
+    mMainPresenter.onPause()
+    super.onPause()
   }
 
   override fun showSpinner() {
-    mLoadingOverlay?.show();
+    mLoadingOverlay.show();
   }
 
   override fun dismissSpinner() {
-    if (mLoadingOverlay != null && mLoadingOverlay!!.isShowing) {
-      mLoadingOverlay?.dismiss();
+    if (mLoadingOverlay.isShowing) {
+      mLoadingOverlay.dismiss();
     }
+  }
+
+  override fun notifyDataSetChanged() {
+    mAdapter.notifyDataSetChanged()
   }
 }
 
