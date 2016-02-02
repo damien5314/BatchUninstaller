@@ -1,4 +1,4 @@
-package ddiehl.batchuninstaller
+package ddiehl.batchuninstaller.utils
 
 import android.content.Context
 import android.text.format.Formatter

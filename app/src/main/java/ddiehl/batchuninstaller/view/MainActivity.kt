@@ -1,4 +1,4 @@
-package ddiehl.batchuninstaller
+package ddiehl.batchuninstaller.view
 
 import android.app.ProgressDialog
 import android.os.Bundle
@@ -10,6 +10,9 @@ import android.view.Menu
 import android.view.MenuItem
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
+import ddiehl.batchuninstaller.view.MainPresenter
+import ddiehl.batchuninstaller.view.MainPresenterImpl
+import ddiehl.batchuninstaller.R
 import org.jetbrains.anko.AnkoComponent
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.find

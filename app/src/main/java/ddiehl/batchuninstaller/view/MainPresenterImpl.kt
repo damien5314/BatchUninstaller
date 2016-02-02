@@ -1,10 +1,11 @@
-package ddiehl.batchuninstaller
+package ddiehl.batchuninstaller.view
 
 import android.content.pm.IPackageStatsObserver
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageStats
 import android.os.UserHandle
+import ddiehl.batchuninstaller.model.App
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.observable
 import rx.schedulers.Schedulers

@@ -5,13 +5,13 @@
   <uses-permission android:name="android.permission.GET_PACKAGE_SIZE"/>
 
   <application
-      android:name="ddiehl.batchuninstaller.CustomApplication"
+      android:name=".CustomApplication"
       android:allowBackup="true"
       android:label="@string/app_name"
       android:icon="@mipmap/ic_launcher"
       android:supportsRtl="true"
       android:theme="@style/AppTheme">
-    <activity android:name="ddiehl.batchuninstaller.MainActivity">
+    <activity android:name=".view.MainActivity">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

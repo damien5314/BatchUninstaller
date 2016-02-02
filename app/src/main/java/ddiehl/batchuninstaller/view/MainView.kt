@@ -1,4 +1,4 @@
-package ddiehl.batchuninstaller;
+package ddiehl.batchuninstaller.view;
 
 import android.content.pm.PackageManager
 

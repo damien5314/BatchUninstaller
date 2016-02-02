@@ -1,4 +1,4 @@
-package ddiehl.batchuninstaller
+package ddiehl.batchuninstaller.model
 
 data class App(
     val name: CharSequence,

@@ -1,4 +1,6 @@
-package ddiehl.batchuninstaller
+package ddiehl.batchuninstaller.view
+
+import ddiehl.batchuninstaller.model.App
 
 interface MainPresenter {
   fun onResume(): Unit
