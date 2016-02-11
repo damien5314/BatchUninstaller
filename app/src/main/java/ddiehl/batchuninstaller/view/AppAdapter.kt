@@ -70,12 +70,12 @@ class AppAdapter(
           verticalLayout {
             textView {
               id = R.id.app_name
-              setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
+              setTextAppearance(ui.ctx, R.style.TextAppearance_AppCompat_Medium)
               textColor = ContextCompat.getColor(ui.ctx, R.color.primary_text)
             }
             textView {
               id = R.id.app_size
-              setTextAppearance(R.style.TextAppearance_AppCompat_Small)
+              setTextAppearance(ui.ctx, R.style.TextAppearance_AppCompat_Small)
               textColor = ContextCompat.getColor(ui.ctx, R.color.secondary_text)
             }
             lparams {

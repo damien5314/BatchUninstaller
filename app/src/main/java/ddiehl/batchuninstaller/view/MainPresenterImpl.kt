@@ -4,6 +4,7 @@ import android.content.pm.IPackageStatsObserver
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageStats
+import android.os.Build
 import android.os.UserHandle
 import ddiehl.batchuninstaller.model.App
 import rx.android.schedulers.AndroidSchedulers
@@ -72,36 +73,48 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
   private fun getAppPackageSize(app: App) {
     try {
       val clz = mMainView.getPackageManager().javaClass
-      val myUserId: Method = UserHandle::class.java
-          .getDeclaredMethod("myUserId"); //ignore check this when u set ur min SDK < 17
-      val userID: Int = myUserId.invoke(mMainView.getPackageManager()) as Int;
-      val clzInt = javaClass<Int>()
-      val getPackageSizeInfo: Method = clz.getDeclaredMethod(
-          "getPackageSizeInfo",
-          String::class.java,
-          clzInt,
-          IPackageStatsObserver::class.java);
-      getPackageSizeInfo.invoke(mMainView.getPackageManager(), app.packageName, userID,
-          object : IPackageStatsObserver.Stub() {
-            override fun onGetStatsCompleted(ps: PackageStats?, succeeded: Boolean) {
-              if (succeeded && ps != null) {
-                app.size =
-                    ps.cacheSize +
-                    ps.codeSize +
-                    ps.dataSize +
-                    ps.externalCacheSize +
-                    ps.externalCodeSize +
-                    ps.externalDataSize +
-                    ps.externalMediaSize +
-                    ps.externalObbSize
-                mMainView.onDataUpdated(
-                    mData.indexOf(app))
-              }
-            }
-          });
+      if (Build.VERSION.SDK_INT >= 17) {
+        val myUserId: Method = UserHandle::class.java
+            .getDeclaredMethod("myUserId"); //ignore check this when u set ur min SDK < 17
+        val userID: Int = myUserId.invoke(mMainView.getPackageManager()) as Int
+        clz.getDeclaredMethod(
+            "getPackageSizeInfo",
+            String::class.java,
+            javaClass<Int>(),
+            IPackageStatsObserver::class.java)
+            .invoke(mMainView.getPackageManager(), app.packageName, userID,
+                getPackageStatsObserver(app))
+      } else {
+        clz.getDeclaredMethod(
+            "getPackageSizeInfo",
+            String::class.java,
+            IPackageStatsObserver::class.java)
+            .invoke(mMainView.getPackageManager(), app.packageName,
+                getPackageStatsObserver(app))
+      }
     } catch (ex: Exception) {
       Timber.e(ex, "An error occurred");
       throw ex;
+    }
+  }
+
+  fun getPackageStatsObserver(app: App) : IPackageStatsObserver {
+    return object : IPackageStatsObserver.Stub() {
+      override fun onGetStatsCompleted(ps: PackageStats?, succeeded: Boolean) {
+        if (succeeded && ps != null) {
+          app.size =
+              ps.cacheSize +
+                  ps.codeSize +
+                  ps.dataSize +
+                  ps.externalCacheSize +
+                  ps.externalCodeSize +
+                  ps.externalDataSize +
+                  ps.externalMediaSize +
+                  ps.externalObbSize
+          mMainView.onDataUpdated(
+              mData.indexOf(app))
+        }
+      }
     }
   }
 
