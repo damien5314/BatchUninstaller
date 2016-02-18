@@ -18,7 +18,6 @@ import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.toolbar
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
-import timber.log.Timber
 
 /**
  * TODO
@@ -89,11 +88,7 @@ class MainActivity : AppCompatActivity(), MainView {
           when (item!!.itemId) {
             R.id.action_uninstall -> {
               mode.finish()
-              val positions = mMultiSelector.selectedPositions
               mMainPresenter.onClickedBatchUninstall()
-              positions.forEach {
-                Timber.d("Item uninstalled: " + mMainPresenter.getItemAt(it))
-              }
               mMultiSelector.clearSelections()
               return true
             }
@@ -132,15 +127,15 @@ class MainActivity : AppCompatActivity(), MainView {
       verticalLayout {
         toolbar(R.style.ToolbarThemeLightText) {
           id = R.id.toolbar
-          backgroundResource = R.color.primary
-          popupTheme = R.style.Theme_AppCompat_Light
-          elevation = dip(6).toFloat()
           lparams(width = matchParent) {
             val tv = TypedValue()
             if (ui.owner.theme.resolveAttribute(R.attr.actionBarSize, tv, true)) {
               height = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics);
             }
           }
+          backgroundResource = R.color.primary
+          popupTheme = R.style.Theme_AppCompat_Light
+          elevation = dip(6).toFloat()
         }
         recyclerView {
           id = R.id.recycler_view

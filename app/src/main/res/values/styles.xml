@@ -10,6 +10,7 @@
     <item name="windowNoTitle">true</item>
     <item name="android:windowNoTitle">true</item>
     <item name="windowActionBar">false</item> <!-- For 2.x version -->
+    <!-- This gets the action mode to overlay on AppCompat toolbar instead of native ActionBar -->
     <item name="android:windowActionModeOverlay">true</item>
     <!-- app background color -->
     <!--<item name="android:windowBackground">@color/primary</item>-->

@@ -12,7 +12,6 @@ import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.App
 import ddiehl.batchuninstaller.utils.formatFileSize
 import org.jetbrains.anko.*
-import timber.log.Timber
 
 class AppAdapter(
     val mPresenter: MainPresenter,
@@ -54,7 +53,6 @@ class AppAdapter(
     }
 
     override fun onClick(v: View?) {
-      Timber.d("OnClick for ViewHolder @ " + adapterPosition)
       if (adapterPosition == -1) return
       if (!mMultiSelector.isSelectable) {
         mMainPresenter.onItemSelected(adapterPosition)
@@ -67,7 +65,15 @@ class AppAdapter(
     class UI : AnkoComponent<AppAdapter> {
       override fun createView(ui: AnkoContext<AppAdapter>): View = ui.apply {
         linearLayout {
+          lparams {
+            width = matchParent
+            padding = dimen(R.dimen.item_row_margin)
+          }
           verticalLayout {
+            lparams {
+              width = dip(0)
+              weight = 1.0f
+            }
             textView {
               id = R.id.app_name
               setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
@@ -78,10 +84,6 @@ class AppAdapter(
               setTextAppearance(R.style.TextAppearance_AppCompat_Small)
               textColor = ContextCompat.getColor(ui.ctx, R.color.secondary_text)
             }
-            lparams {
-              width = dip(0)
-              weight = 1.0f
-            }
           }
           imageView {
             id = R.id.app_icon
@@ -89,10 +91,6 @@ class AppAdapter(
               width = dimen(R.dimen.app_icon_width)
               height = dimen(R.dimen.app_icon_width)
             }
-          }
-          lparams {
-            width = matchParent
-            padding = dimen(R.dimen.item_row_margin)
           }
         }
       }.view
