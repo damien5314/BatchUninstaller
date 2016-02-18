@@ -5,19 +5,21 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
+import android.support.v7.view.ContextThemeWrapper
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.Toolbar
+import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewManager
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.utils.getUninstallIntent
-import org.jetbrains.anko.AnkoComponent
-import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.find
+import org.jetbrains.anko.*
+import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.recyclerview.v7.recyclerView
-import org.jetbrains.anko.setContentView
 import timber.log.Timber
 
 /**
@@ -26,18 +28,20 @@ import timber.log.Timber
  *   to capture uninstall events
  */
 class MainActivity : AppCompatActivity(), MainView {
+  private lateinit var mLoadingOverlay: ProgressDialog
+  private lateinit var mToolbar: Toolbar
+  private lateinit var mRecyclerView: RecyclerView
 
   private val mMainPresenter: MainPresenter = MainPresenterImpl(this)
-
-  private lateinit var mLoadingOverlay: ProgressDialog
-  private lateinit var mRecyclerView: RecyclerView
   private val mMultiSelector: MultiSelector = MultiSelector()
   private lateinit var mAdapter: AppAdapter
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     UI().setContentView(this)
+    mToolbar = find<Toolbar>(R.id.toolbar)
     mRecyclerView = find<RecyclerView>(R.id.recycler_view)
+    setSupportActionBar(mToolbar)
     mAdapter = AppAdapter(mMainPresenter, mMultiSelector)
     mRecyclerView.adapter = mAdapter
     mLoadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
@@ -127,10 +131,31 @@ class MainActivity : AppCompatActivity(), MainView {
 
   private class UI : AnkoComponent<MainActivity> {
     override fun createView(ui: AnkoContext<MainActivity>) = ui.apply {
-      recyclerView {
-        id = R.id.recycler_view
-        layoutManager = LinearLayoutManager(ui.owner)
+      verticalLayout {
+        toolbar(R.style.ToolbarThemeLightText) {
+          id = R.id.toolbar
+          backgroundResource = R.color.primary
+          popupTheme = R.style.Theme_AppCompat_Light
+          elevation = dip(6).toFloat()
+          lparams(width = matchParent) {
+            val tv = TypedValue()
+            if (ui.owner.theme.resolveAttribute(R.attr.actionBarSize, tv, true)) {
+              height = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics);
+            }
+          }
+        }
+        recyclerView {
+          id = R.id.recycler_view
+          layoutManager = LinearLayoutManager(ui.owner)
+        }
       }
     }.view
   }
+}
+
+inline fun ViewManager.toolbar(styleRes: Int, init: Toolbar.() -> Unit): Toolbar {
+  return ankoView({
+    if (styleRes == 0) Toolbar(it)
+    else Toolbar(ContextThemeWrapper(it, styleRes), null, R.attr.toolbarStyle)
+  }) { init() }
 }
