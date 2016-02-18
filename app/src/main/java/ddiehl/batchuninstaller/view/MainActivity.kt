@@ -5,20 +5,18 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
-import android.support.v7.view.ContextThemeWrapper
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
 import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
-import android.view.ViewManager
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.utils.getUninstallIntent
+import ddiehl.batchuninstaller.utils.toolbar
 import org.jetbrains.anko.*
-import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.recyclerview.v7.recyclerView
 import timber.log.Timber
 
@@ -151,11 +149,4 @@ class MainActivity : AppCompatActivity(), MainView {
       }
     }.view
   }
-}
-
-inline fun ViewManager.toolbar(styleRes: Int, init: Toolbar.() -> Unit): Toolbar {
-  return ankoView({
-    if (styleRes == 0) Toolbar(it)
-    else Toolbar(ContextThemeWrapper(it, styleRes), null, R.attr.toolbarStyle)
-  }) { init() }
 }
