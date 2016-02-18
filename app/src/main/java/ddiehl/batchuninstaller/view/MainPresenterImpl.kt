@@ -80,7 +80,7 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
         clz.getDeclaredMethod(
             "getPackageSizeInfo",
             String::class.java,
-            javaClass<Int>(),
+            Int::class.java,
             IPackageStatsObserver::class.java)
             .invoke(mMainView.getPackageManager(), app.packageName, userID,
                 getPackageStatsObserver(app))
