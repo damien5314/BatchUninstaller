@@ -24,6 +24,9 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
   private val mUninstallQueue = LinkedList<App>()
   private var mUninstallApp: App? = null
 
+  private var mNumSelected: Int = 0
+  private var mSelectedSize: Long = 0
+
   override fun getNumItems(): Int = mData.size
 
   override fun getItemAt(position: Int): App {
@@ -114,28 +117,30 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
     }
   }
 
-  private var numSelected: Int = 0
-  private var selectedSize: Long = 0
-
   override fun onItemSelected(position: Int, selected: Boolean) {
     mMainView.activateActionMode()
     val app = mData[position]
     if (selected) {
-      numSelected++
-      selectedSize += app.size
+      mNumSelected++
+      mSelectedSize += app.size
     } else {
-      numSelected--
-      selectedSize -= app.size
+      mNumSelected--
+      mSelectedSize -= app.size
     }
     mMainView.setActionModeInfo(
-        mContext.resources.getQuantityString(R.plurals.items_selected, numSelected, numSelected),
-        formatFileSize(selectedSize, mContext))
+        mContext.resources.getQuantityString(R.plurals.items_selected, mNumSelected, mNumSelected),
+        formatFileSize(mSelectedSize, mContext))
   }
 
   override fun onClickedBatchUninstall() {
     val apps = mMainView.getSelectedPositions().map { mData[it] }
     mUninstallQueue.addAll(apps)
     processQueue()
+  }
+
+  override fun onSelectionsCleared() {
+    mNumSelected = 0
+    mSelectedSize = 0
   }
 
   override fun onItemUninstalled(success: Boolean) {

@@ -10,4 +10,5 @@ interface MainPresenter {
   fun onItemSelected(position: Int, selected: Boolean)
   fun onClickedBatchUninstall()
   fun onItemUninstalled(success: Boolean)
+  fun onSelectionsCleared()
 }

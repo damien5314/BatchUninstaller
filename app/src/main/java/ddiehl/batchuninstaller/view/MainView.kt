@@ -12,4 +12,5 @@ interface MainView {
   fun onDataUpdated(index: Int)
   fun getSelectedPositions(): List<Int>
   fun showUninstallForPackage(packageName: String)
+  fun finishActionMode()
 }

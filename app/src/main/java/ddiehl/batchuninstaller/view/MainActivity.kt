@@ -23,6 +23,7 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
  * TODO
  * Implement a broadcast receiver for android.intent.action.PACKAGE_REMOVED
  *   to capture uninstall events
+ * Maintain selections on rotation
  */
 class MainActivity : AppCompatActivity(), MainView {
   private lateinit var mLoadingOverlay: ProgressDialog
@@ -92,8 +93,8 @@ class MainActivity : AppCompatActivity(), MainView {
             }
 
             override fun onActionItemClicked(
-                mode: ActionMode, item: MenuItem?): Boolean {
-              when (item!!.itemId) {
+                mode: ActionMode, item: MenuItem): Boolean {
+              when (item.itemId) {
                 R.id.action_uninstall -> {
                   mode.finish()
                   mMainPresenter.onClickedBatchUninstall()
@@ -106,9 +107,17 @@ class MainActivity : AppCompatActivity(), MainView {
 
             override fun onDestroyActionMode(actionMode: ActionMode?) {
               super.onDestroyActionMode(actionMode)
+              mMainPresenter.onSelectionsCleared()
               mActionMode = null
             }
           })
+    }
+  }
+
+  override fun finishActionMode() {
+    if (mActionMode != null) {
+      mActionMode!!.finish()
+      mActionMode = null
     }
   }
 
