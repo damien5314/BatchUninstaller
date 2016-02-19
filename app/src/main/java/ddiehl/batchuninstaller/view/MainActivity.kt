@@ -5,19 +5,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.Toolbar
-import android.util.TypedValue
 import android.view.Menu
 import android.view.MenuItem
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.utils.getUninstallIntent
-import ddiehl.batchuninstaller.utils.toolbar
-import org.jetbrains.anko.*
-import org.jetbrains.anko.recyclerview.v7.recyclerView
+import org.jetbrains.anko.find
+import org.jetbrains.anko.setContentView
 
 /**
  * TODO
@@ -36,7 +33,7 @@ class MainActivity : AppCompatActivity(), MainView {
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
-    UI().setContentView(this)
+    MainActivity_UI().setContentView(this)
     mToolbar = find<Toolbar>(R.id.toolbar)
     mRecyclerView = find<RecyclerView>(R.id.recycler_view)
     setSupportActionBar(mToolbar)
@@ -142,28 +139,5 @@ class MainActivity : AppCompatActivity(), MainView {
     } else {
       mMainPresenter.onItemUninstalled(false)
     }
-  }
-
-  private class UI : AnkoComponent<MainActivity> {
-    override fun createView(ui: AnkoContext<MainActivity>) = ui.apply {
-      verticalLayout {
-        toolbar(R.style.ToolbarThemeLightText) {
-          id = R.id.toolbar
-          lparams(width = matchParent) {
-            val tv = TypedValue()
-            if (ui.owner.theme.resolveAttribute(R.attr.actionBarSize, tv, true)) {
-              height = TypedValue.complexToDimensionPixelSize(tv.data, resources.displayMetrics);
-            }
-          }
-          backgroundResource = R.color.primary
-          popupTheme = R.style.Theme_AppCompat_Light
-          elevation = dip(6).toFloat()
-        }
-        recyclerView {
-          id = R.id.recycler_view
-          layoutManager = LinearLayoutManager(ui.owner)
-        }
-      }
-    }.view
   }
 }

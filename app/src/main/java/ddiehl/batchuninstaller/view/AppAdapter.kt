@@ -1,6 +1,5 @@
 package ddiehl.batchuninstaller.view
 
-import android.support.v4.content.ContextCompat
 import android.support.v7.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
@@ -11,7 +10,8 @@ import com.bignerdranch.android.multiselector.SwappingHolder
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.App
 import ddiehl.batchuninstaller.utils.formatFileSize
-import org.jetbrains.anko.*
+import org.jetbrains.anko.AnkoContext
+import org.jetbrains.anko.find
 
 class AppAdapter(
     val mPresenter: MainPresenter,
@@ -24,7 +24,7 @@ class AppAdapter(
   }
 
   override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-    return VH(VH.UI().createView(
+    return VH(AppAdapter_VH_UI().createView(
         AnkoContext.create(parent!!.context, this)),
         mPresenter,
         mMultiSelector)
@@ -62,40 +62,6 @@ class AppAdapter(
       } else {
         // OnClick behavior for the individual view
       }
-    }
-
-    class UI : AnkoComponent<AppAdapter> {
-      override fun createView(ui: AnkoContext<AppAdapter>): View = ui.apply {
-        linearLayout {
-          lparams {
-            width = matchParent
-            padding = dimen(R.dimen.item_row_margin)
-          }
-          verticalLayout {
-            lparams {
-              width = dip(0)
-              weight = 1.0f
-            }
-            textView {
-              id = R.id.app_name
-              setTextAppearance(R.style.TextAppearance_AppCompat_Medium)
-              textColor = ContextCompat.getColor(ui.ctx, R.color.primary_text)
-            }
-            textView {
-              id = R.id.app_size
-              setTextAppearance(R.style.TextAppearance_AppCompat_Small)
-              textColor = ContextCompat.getColor(ui.ctx, R.color.secondary_text)
-            }
-          }
-          imageView {
-            id = R.id.app_icon
-            lparams {
-              width = dimen(R.dimen.app_icon_width)
-              height = dimen(R.dimen.app_icon_width)
-            }
-          }
-        }
-      }.view
     }
   }
 }
