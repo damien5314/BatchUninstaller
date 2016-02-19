@@ -7,11 +7,11 @@
     <item name="colorPrimaryDark">@color/primary_dark</item>
     <item name="colorAccent">@color/accent</item>
     <!-- to remove the default action -->
-    <item name="windowNoTitle">true</item>
-    <item name="android:windowNoTitle">true</item>
+    <!--<item name="windowNoTitle">true</item>-->
+    <!--<item name="android:windowNoTitle">true</item>-->
     <item name="windowActionBar">false</item> <!-- For 2.x version -->
     <!-- This gets the action mode to overlay on AppCompat toolbar instead of native ActionBar -->
-    <item name="android:windowActionModeOverlay">true</item>
+    <item name="windowActionModeOverlay">true</item>
     <!-- app background color -->
     <!--<item name="android:windowBackground">@color/primary</item>-->
   </style>
