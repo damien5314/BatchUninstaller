@@ -127,9 +127,13 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
       mNumSelected--
       mSelectedSize -= app.size
     }
-    mMainView.setActionModeInfo(
-        mContext.resources.getQuantityString(R.plurals.items_selected, mNumSelected, mNumSelected),
-        formatFileSize(mSelectedSize, mContext))
+    if (mNumSelected == 0) {
+      mMainView.finishActionMode()
+    } else {
+      mMainView.setActionModeInfo(
+          mContext.resources.getQuantityString(R.plurals.items_selected, mNumSelected, mNumSelected),
+          formatFileSize(mSelectedSize, mContext))
+    }
   }
 
   override fun onClickedBatchUninstall() {
