@@ -1,6 +1,11 @@
 package ddiehl.batchuninstaller.view
 
+import android.content.Context
+import android.graphics.drawable.ColorDrawable
+import android.graphics.drawable.Drawable
+import android.graphics.drawable.StateListDrawable
 import android.support.v7.widget.RecyclerView
+import android.util.StateSet
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -13,10 +18,10 @@ import ddiehl.batchuninstaller.utils.formatFileSize
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.find
 
-class AppAdapter(
-    val mPresenter: MainPresenter,
-    val mMultiSelector: MultiSelector) :
+class AppAdapter(val mPresenter: MainPresenter, val mMultiSelector: MultiSelector) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+  override fun getItemCount(): Int = mPresenter.getNumItems()
 
   override fun onBindViewHolder(holder: RecyclerView.ViewHolder?, position: Int) {
     (holder as VH).bind(
@@ -30,8 +35,6 @@ class AppAdapter(
         mMultiSelector)
   }
 
-  override fun getItemCount(): Int = mPresenter.getNumItems()
-
   class VH(
       val mView: View,
       val mMainPresenter: MainPresenter,
@@ -43,6 +46,21 @@ class AppAdapter(
 
     init {
       itemView.setOnClickListener(this)
+      selectionModeBackgroundDrawable = getAccentStateDrawable(mView.context)
+//      selectionModeBackgroundDrawable = ContextCompat.getDrawable(
+//          mView.context, R.drawable.selectable_item_background_blue)
+    }
+
+    private fun getAccentStateDrawable(context: Context): Drawable {
+//      val typedValue = TypedValue();
+//      val theme: Resources.Theme = context.theme;
+//      theme.resolveAttribute(R.attr.colorAccent, typedValue, true);
+//      val colorDrawable = ColorDrawable(typedValue.data);
+      val colorDrawable = ColorDrawable(R.color.blue);
+      val stateListDrawable = StateListDrawable();
+      stateListDrawable.addState(IntArray(1) { android.R.attr.state_activated }, colorDrawable);
+      stateListDrawable.addState(StateSet.WILD_CARD, null);
+      return stateListDrawable;
     }
 
     fun bind(app: App) {

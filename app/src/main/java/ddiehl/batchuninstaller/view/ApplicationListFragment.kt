@@ -28,6 +28,7 @@ class ApplicationListFragment() : Fragment(), MainView {
 
   private val mMainPresenter: MainPresenter = MainPresenterImpl(this)
   private val mMultiSelector: MultiSelector = MultiSelector()
+  private var mActionMode: ActionMode? = null
   private lateinit var mAdapter: AppAdapter
 
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,6 +46,7 @@ class ApplicationListFragment() : Fragment(), MainView {
   }
 
   private fun initToolbar(root: View) {
+    mActionMode = null
     mToolbar = root.find(R.id.toolbar)
     (activity as AppCompatActivity).setSupportActionBar(mToolbar)
   }
@@ -59,14 +61,6 @@ class ApplicationListFragment() : Fragment(), MainView {
     mLoadingOverlay = ProgressDialog(root.context, R.style.ProgressDialog)
     mLoadingOverlay.setCancelable(false)
     mLoadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
-  }
-
-  override fun onSaveInstanceState(data: Bundle) {
-    data.putParcelableArrayList("data",
-        mMainPresenter.saveData())
-    data.putBundle("selected",
-        mMultiSelector.saveSelectionStates())
-    super.onSaveInstanceState(data)
   }
 
   override fun onStart() {
@@ -100,8 +94,6 @@ class ApplicationListFragment() : Fragment(), MainView {
   override fun getSelectedPositions(): List<Int> {
     return mMultiSelector.selectedPositions
   }
-
-  private var mActionMode: ActionMode? = null
 
   override fun activateActionMode() {
     if (mActionMode == null) {
