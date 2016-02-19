@@ -7,7 +7,8 @@ interface MainView {
   fun dismissSpinner()
   fun getPackageManager(): PackageManager
   fun notifyDataSetChanged()
-  fun activateSelectionMode()
+  fun activateActionMode()
+  fun setActionModeInfo(title: String, subtitle: String)
   fun onDataUpdated(index: Int)
   fun getSelectedPositions(): List<Int>
   fun showUninstallForPackage(packageName: String)

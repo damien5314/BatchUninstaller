@@ -7,7 +7,7 @@ interface MainPresenter {
   fun onStop(): Unit
   fun getNumItems(): Int
   fun getItemAt(position: Int): App
-  fun onItemSelected(position: Int)
+  fun onItemSelected(position: Int, selected: Boolean)
   fun onClickedBatchUninstall()
   fun onItemUninstalled(success: Boolean)
 }

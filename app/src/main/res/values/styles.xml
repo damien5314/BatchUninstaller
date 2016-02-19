@@ -14,6 +14,13 @@
     <item name="windowActionModeOverlay">true</item>
     <!-- app background color -->
     <!--<item name="android:windowBackground">@color/primary</item>-->
+    <!-- Sets the color of the CAB -->
+    <item name="actionModeStyle">@style/LStyled.ActionMode</item>
+  </style>
+
+  <style name="LStyled.ActionMode" parent="@style/Widget.AppCompat.ActionMode">
+    <item name="background">@color/color_action_mode_bg</item>
+    <item name="actionMenuTextColor">@color/color_action_mode_text</item>
   </style>
 
   <style name="ToolbarThemeLightText" parent="AppTheme">

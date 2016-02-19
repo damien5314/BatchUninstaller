@@ -74,35 +74,48 @@ class MainActivity : AppCompatActivity(), MainView {
     runOnUiThread { mAdapter.notifyItemChanged(index) }
   }
 
-  private val mSelectedMode: ActionMode.Callback =
-      object: ModalMultiSelectorCallback(mMultiSelector) {
-        override fun onCreateActionMode(actionMode: ActionMode?, menu: Menu?): Boolean {
-          super.onCreateActionMode(actionMode, menu)
-          this@MainActivity.menuInflater.inflate(R.menu.context_menu, menu)
-          mMultiSelector.isSelectable = true
-          return true
-        }
-
-        override fun onActionItemClicked(
-            mode: ActionMode, item: MenuItem?): Boolean {
-          when (item!!.itemId) {
-            R.id.action_uninstall -> {
-              mode.finish()
-              mMainPresenter.onClickedBatchUninstall()
-              mMultiSelector.clearSelections()
-              return true
-            }
-            else -> return false
-          }
-        }
-      }
-
   override fun getSelectedPositions(): List<Int> {
     return mMultiSelector.selectedPositions
   }
 
-  override fun activateSelectionMode() {
-    startSupportActionMode(mSelectedMode)
+  private var mActionMode: ActionMode? = null
+
+  override fun activateActionMode() {
+    if (mActionMode == null) {
+      mActionMode = startSupportActionMode(
+          object: ModalMultiSelectorCallback(mMultiSelector) {
+            override fun onCreateActionMode(actionMode: ActionMode?, menu: Menu?): Boolean {
+              super.onCreateActionMode(actionMode, menu)
+              this@MainActivity.menuInflater.inflate(R.menu.context_menu, menu)
+              mMultiSelector.isSelectable = true
+              return true
+            }
+
+            override fun onActionItemClicked(
+                mode: ActionMode, item: MenuItem?): Boolean {
+              when (item!!.itemId) {
+                R.id.action_uninstall -> {
+                  mode.finish()
+                  mMainPresenter.onClickedBatchUninstall()
+                  mMultiSelector.clearSelections()
+                  return true
+                }
+                else -> return false
+              }
+            }
+
+            override fun onDestroyActionMode(actionMode: ActionMode?) {
+              super.onDestroyActionMode(actionMode)
+              mActionMode = null
+            }
+          })
+    }
+  }
+
+  override fun setActionModeInfo(title: String, subtitle: String) {
+    if (mActionMode == null) return
+    mActionMode!!.title = title
+    mActionMode!!.subtitle = subtitle
   }
 
   override fun showUninstallForPackage(packageName: String) {

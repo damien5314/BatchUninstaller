@@ -1,6 +1,7 @@
 package ddiehl.batchuninstaller.utils
 
 import android.content.Intent
+import android.content.pm.PackageStats
 import android.net.Uri
 import android.support.v7.view.ContextThemeWrapper
 import android.support.v7.widget.Toolbar
@@ -28,4 +29,9 @@ inline fun ViewManager.toolbar(styleRes: Int, init: Toolbar.() -> Unit): Toolbar
     if (styleRes == 0) Toolbar(it)
     else Toolbar(ContextThemeWrapper(it, styleRes), null, R.attr.toolbarStyle)
   }) { init() }
+}
+
+fun PackageStats.getTotalSize(): Long {
+  return cacheSize + codeSize + dataSize +
+      externalCacheSize + externalCodeSize + externalDataSize+ externalMediaSize + externalObbSize
 }

@@ -6,7 +6,11 @@ import android.content.pm.PackageManager
 import android.content.pm.PackageStats
 import android.os.Build
 import android.os.UserHandle
+import ddiehl.batchuninstaller.CustomApplication
+import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.App
+import ddiehl.batchuninstaller.utils.formatFileSize
+import ddiehl.batchuninstaller.utils.getTotalSize
 import rx.android.schedulers.AndroidSchedulers
 import rx.lang.kotlin.observable
 import rx.schedulers.Schedulers
@@ -15,7 +19,7 @@ import java.lang.reflect.Method
 import java.util.*
 
 class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
-
+  private val mContext = CustomApplication.context
   private val mData: MutableList<App> = ArrayList()
   private val mUninstallQueue = LinkedList<App>()
   private var mUninstallApp: App? = null
@@ -102,15 +106,7 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
     return object : IPackageStatsObserver.Stub() {
       override fun onGetStatsCompleted(ps: PackageStats?, succeeded: Boolean) {
         if (succeeded && ps != null) {
-          app.size =
-              ps.cacheSize +
-                  ps.codeSize +
-                  ps.dataSize +
-                  ps.externalCacheSize +
-                  ps.externalCodeSize +
-                  ps.externalDataSize +
-                  ps.externalMediaSize +
-                  ps.externalObbSize
+          app.size = ps.getTotalSize()
           mMainView.onDataUpdated(
               mData.indexOf(app))
         }
@@ -118,8 +114,22 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
     }
   }
 
-  override fun onItemSelected(position: Int) {
-    mMainView.activateSelectionMode()
+  private var numSelected: Int = 0
+  private var selectedSize: Long = 0
+
+  override fun onItemSelected(position: Int, selected: Boolean) {
+    mMainView.activateActionMode()
+    val app = mData[position]
+    if (selected) {
+      numSelected++
+      selectedSize += app.size
+    } else {
+      numSelected--
+      selectedSize -= app.size
+    }
+    mMainView.setActionModeInfo(
+        mContext.resources.getQuantityString(R.plurals.items_selected, numSelected, numSelected),
+        formatFileSize(selectedSize, mContext))
   }
 
   override fun onClickedBatchUninstall() {

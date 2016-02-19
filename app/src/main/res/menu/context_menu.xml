@@ -6,7 +6,7 @@
   <item
       android:id="@+id/action_uninstall"
       android:title="@string/action_uninstall"
-      android:icon="@android:drawable/ic_delete"
+      android:icon="@drawable/ic_action_delete"
       android:orderInCategory="100"
       app:showAsAction="ifRoom"/>
 

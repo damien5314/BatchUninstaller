@@ -9,4 +9,6 @@
   <color name="divider">#B6B6B6</color>
 
   <color name="transparent">#00000000</color>
+  <color name="color_action_mode_bg">@color/primary</color>
+  <color name="color_action_mode_text">@android:color/white</color>
 </resources>

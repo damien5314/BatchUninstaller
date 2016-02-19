@@ -55,9 +55,11 @@ class AppAdapter(
     override fun onClick(v: View?) {
       if (adapterPosition == -1) return
       if (!mMultiSelector.isSelectable) {
-        mMainPresenter.onItemSelected(adapterPosition)
+        mMainPresenter.onItemSelected(adapterPosition, true)
         mMultiSelector.setSelected(this, true);
-      } else if (!mMultiSelector.tapSelection(this)) {
+      } else if (mMultiSelector.tapSelection(this)) {
+        mMainPresenter.onItemSelected(adapterPosition, mMultiSelector.isSelected(adapterPosition, 0))
+      } else {
         // OnClick behavior for the individual view
       }
     }
