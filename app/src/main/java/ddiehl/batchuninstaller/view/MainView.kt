@@ -13,4 +13,5 @@ interface MainView {
   fun getSelectedPositions(): List<Int>
   fun showUninstallForPackage(packageName: String)
   fun finishActionMode()
+  fun showToast(throwable: Throwable)
 }

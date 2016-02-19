@@ -20,7 +20,12 @@ import java.util.*
 
 class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
   private val mContext = CustomApplication.context
-  private val mData: MutableList<App> = ArrayList()
+  private val mData: ArrayList<App> = ArrayList()
+  override fun saveData(): ArrayList<App> = mData
+  override fun restoreData(list: ArrayList<App>) {
+    mData.clear()
+    mData.addAll(list)
+  }
   private val mUninstallQueue = LinkedList<App>()
   private var mUninstallApp: App? = null
 
@@ -54,14 +59,10 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
         }
       }
       subscriber.onNext(ArrayList(packageSet.map {
-        App(
-            pm.getApplicationLabel(pm.getApplicationInfo(it, 0)),
-            0,
-            it
-        )
+        val label = pm.getApplicationLabel(pm.getApplicationInfo(it, 0))
+        App(label, 0, it)
       }))
-      subscriber.onCompleted()
-    }
+      subscriber.onCompleted() }
         .subscribeOn(Schedulers.computation())
         .observeOn(AndroidSchedulers.mainThread())
         .doOnSubscribe { mMainView.showSpinner() }
@@ -69,8 +70,7 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
         .subscribe({
           mData.clear()
           mData.addAll(it)
-          calculateApplicationSize()
-        })
+        }, { mMainView.showToast(it) }, { calculateApplicationSize() })
   }
 
   private fun calculateApplicationSize() {
@@ -82,7 +82,7 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
       val clz = mMainView.getPackageManager().javaClass
       if (Build.VERSION.SDK_INT >= 17) {
         val myUserId: Method = UserHandle::class.java
-            .getDeclaredMethod("myUserId"); //ignore check this when u set ur min SDK < 17
+            .getDeclaredMethod("myUserId");
         val userID: Int = myUserId.invoke(mMainView.getPackageManager()) as Int
         clz.getDeclaredMethod(
             "getPackageSizeInfo",

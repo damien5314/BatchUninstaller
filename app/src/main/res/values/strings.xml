@@ -5,4 +5,5 @@
     <item quantity="one">%d app selected</item>
     <item quantity="other">%d apps selected</item>
   </plurals>
+  <string name="error">error retrieving application info</string>
 </resources>
