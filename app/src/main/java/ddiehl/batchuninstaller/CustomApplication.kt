@@ -5,13 +5,13 @@ import android.content.Context
 import timber.log.Timber
 
 public class CustomApplication : Application() {
-  companion object {
-    lateinit var context: Context
-  }
+    companion object {
+        lateinit var context: Context
+    }
 
-  override fun onCreate() {
-    super.onCreate()
-    context = this
-    Timber.plant(Timber.DebugTree())
-  }
+    override fun onCreate() {
+        super.onCreate()
+        context = this
+        Timber.plant(Timber.DebugTree())
+    }
 }
