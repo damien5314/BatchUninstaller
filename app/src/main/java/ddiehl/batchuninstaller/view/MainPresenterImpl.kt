@@ -1,24 +1,24 @@
 package ddiehl.batchuninstaller.view
 
-import android.content.pm.IPackageStatsObserver
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_ACTIVITIES
-import android.content.pm.PackageStats
 import ddiehl.batchuninstaller.CustomApplication
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.App
 import ddiehl.batchuninstaller.utils.formatFileSize
-import ddiehl.batchuninstaller.utils.getAppPackageSize
-import ddiehl.batchuninstaller.utils.getTotalSize
-import rx.android.schedulers.AndroidSchedulers
-import rx.lang.kotlin.observable
-import rx.schedulers.Schedulers
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 import java.util.*
+import kotlin.collections.ArrayList
 
 class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
+
     private val mContext = CustomApplication.context
     private val mData: ArrayList<App> = ArrayList()
+
     override fun saveData(): ArrayList<App> = mData
     override fun restoreData(list: ArrayList<App>) {
         mData.clear()
@@ -48,48 +48,34 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
     override fun onStop() {}
 
     private fun loadApplicationData() {
-        observable<MutableList<App>> { subscriber ->
-            val pm: PackageManager = mMainView.getPackageManager()
-            val packageList: List<PackageInfo> = pm.getInstalledPackages(GET_ACTIVITIES)
+        Single.defer({
+            val packageManager: PackageManager = mMainView.getPackageManager()
+            val packageList: List<PackageInfo> = packageManager.getInstalledPackages(GET_ACTIVITIES)
             val packageSet: MutableSet<String> = HashSet()
             packageList.forEach {
-                val intent = pm.getLaunchIntentForPackage(it.packageName)
+                val intent = packageManager.getLaunchIntentForPackage(it.packageName)
                 if (intent != null && !it.packageName.startsWith("com.android")) {
                     packageSet.add(it.packageName)
+                    Timber.d("[DCD] {$it.packageName}")
                 }
             }
-            subscriber.onNext(ArrayList(packageSet.map {
-                val label = pm.getApplicationLabel(pm.getApplicationInfo(it, 0))
-                App(label, 0, it)
-            }))
-            subscriber.onCompleted()
-        }
+            Single.just {
+                packageSet.map {
+                    val applicationInfo = packageManager.getApplicationInfo(it, 0)
+                    val label = packageManager.getApplicationLabel(applicationInfo)
+                    App(label, 0, it)
+                }
+            }
+        })
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { mMainView.showSpinner() }
-                .doOnTerminate { mMainView.dismissSpinner() }
-                .subscribe({
+                .doOnEvent { t1, t2 -> mMainView.dismissSpinner() }
+                .subscribe({ func ->
                     mData.clear()
-                    mData.addAll(it)
-                }, { mMainView.showToast(it) }, { calculateApplicationSize() })
-    }
-
-    private fun calculateApplicationSize() {
-        mData.forEach {
-            getAppPackageSize(mMainView.getPackageManager(), it.packageName, getPackageStatsObserver(it))
-        }
-    }
-
-    private fun getPackageStatsObserver(app: App): IPackageStatsObserver {
-        return object : IPackageStatsObserver.Stub() {
-            override fun onGetStatsCompleted(ps: PackageStats?, succeeded: Boolean) {
-                if (succeeded && ps != null) {
-                    app.size = ps.getTotalSize()
-                    mMainView.onDataUpdated(
-                            mData.indexOf(app))
-                }
-            }
-        }
+                    mData.addAll(func.invoke())
+                    mMainView.notifyDataSetChanged()
+                }, { mMainView.showToast(it) })
     }
 
     override fun onItemSelected(position: Int, selected: Boolean) {
