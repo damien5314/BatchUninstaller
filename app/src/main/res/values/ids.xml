@@ -4,5 +4,4 @@
     <item name="app_icon" type="id" />
     <item name="toolbar" type="id" />
     <item name="recycler_view" type="id" />
-    <item name="fragment" type="id" />
 </resources>

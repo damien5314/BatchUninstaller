@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable
 import android.graphics.drawable.StateListDrawable
 import android.support.v7.widget.RecyclerView
 import android.util.StateSet
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -14,7 +15,6 @@ import com.bignerdranch.android.multiselector.SwappingHolder
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.App
 import ddiehl.batchuninstaller.utils.formatFileSize
-import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.find
 
 class AppAdapter(val mPresenter: MainPresenter, val mMultiSelector: MultiSelector) :
@@ -28,10 +28,9 @@ class AppAdapter(val mPresenter: MainPresenter, val mMultiSelector: MultiSelecto
     }
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): RecyclerView.ViewHolder? {
-        return VH(AppAdapter_VH_UI().createView(
-                AnkoContext.create(parent!!.context, this)),
-                mPresenter,
-                mMultiSelector)
+        val view = LayoutInflater.from(parent?.context)
+                .inflate(R.layout.app_item, parent, false)
+        return VH(view, mPresenter, mMultiSelector)
     }
 
     class VH(

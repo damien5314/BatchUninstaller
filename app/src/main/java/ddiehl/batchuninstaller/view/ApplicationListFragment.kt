@@ -19,7 +19,8 @@ import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.find
 import org.jetbrains.anko.support.v4.ctx
 
-class ApplicationListFragment() : Fragment(), MainView {
+class ApplicationListFragment : Fragment(), MainView {
+
     private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
 
     private lateinit var mLoadingOverlay: ProgressDialog
@@ -74,12 +75,12 @@ class ApplicationListFragment() : Fragment(), MainView {
     }
 
     override fun showSpinner() {
-        mLoadingOverlay.show();
+        mLoadingOverlay.show()
     }
 
     override fun dismissSpinner() {
         if (mLoadingOverlay.isShowing) {
-            mLoadingOverlay.dismiss();
+            mLoadingOverlay.dismiss()
         }
     }
 
@@ -142,8 +143,7 @@ class ApplicationListFragment() : Fragment(), MainView {
     }
 
     override fun showUninstallForPackage(packageName: String) {
-        startActivityForResult(
-                getUninstallIntent(packageName, true), 0)
+        startActivityForResult(getUninstallIntent(packageName, true), 0)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
