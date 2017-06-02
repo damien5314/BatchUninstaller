@@ -157,7 +157,7 @@ class ApplicationListFragment() : Fragment(), MainView {
     }
 
     override fun showToast(throwable: Throwable) {
-        Snackbar.make(mToolbar, R.string.error, Snackbar.LENGTH_LONG)
+        Snackbar.make(mToolbar, R.string.error, Snackbar.LENGTH_LONG).show()
     }
 
     override fun getPackageManager(): PackageManager = activity.packageManager

@@ -7,7 +7,7 @@ import ddiehl.batchuninstaller.CustomApplication
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.App
 import ddiehl.batchuninstaller.utils.formatFileSize
-import io.reactivex.Single
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
@@ -45,37 +45,42 @@ class MainPresenterImpl(val mMainView: MainView) : MainPresenter {
         }
     }
 
-    override fun onStop() {}
+    override fun onStop() {
+
+    }
 
     private fun loadApplicationData() {
-        Single.defer({
-            val packageManager: PackageManager = mMainView.getPackageManager()
-            val packageList: List<PackageInfo> = packageManager.getInstalledPackages(GET_ACTIVITIES)
-            val packageSet: MutableSet<String> = HashSet()
-            packageList.forEach {
-                val intent = packageManager.getLaunchIntentForPackage(it.packageName)
-                if (intent != null && !it.packageName.startsWith("com.android")) {
-                    packageSet.add(it.packageName)
-                    Timber.d("[DCD] {$it.packageName}")
-                }
-            }
-            Single.just {
-                packageSet.map {
-                    val applicationInfo = packageManager.getApplicationInfo(it, 0)
-                    val label = packageManager.getApplicationLabel(applicationInfo)
-                    App(label, 0, it)
-                }
-            }
-        })
+        Observable.defer { Observable.just(getApps()) }
                 .subscribeOn(Schedulers.computation())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe { mMainView.showSpinner() }
-                .doOnEvent { t1, t2 -> mMainView.dismissSpinner() }
-                .subscribe({ func ->
+                .doFinally { mMainView.dismissSpinner() }
+                .subscribe({ apps ->
                     mData.clear()
-                    mData.addAll(func.invoke())
+                    mData.addAll(apps)
                     mMainView.notifyDataSetChanged()
-                }, { mMainView.showToast(it) })
+                }, { error ->
+                    Timber.e(error, "Error processing packages")
+                    mMainView.showToast(error)
+                })
+    }
+
+    private fun getApps(): List<App> {
+        val packageManager: PackageManager = mMainView.getPackageManager()
+        val packageList: List<PackageInfo> = packageManager.getInstalledPackages(GET_ACTIVITIES)
+        val packageSet: MutableSet<String> = HashSet()
+        packageList.forEach { pkg ->
+            val intent = packageManager.getLaunchIntentForPackage(pkg.packageName)
+            if (intent != null && !pkg.packageName.startsWith("com.android")) {
+                packageSet.add(pkg.packageName)
+                Timber.d("app: ${pkg.packageName}")
+            }
+        }
+        return packageSet.map {
+            val applicationInfo = packageManager.getApplicationInfo(it, 0)
+            val label = packageManager.getApplicationLabel(applicationInfo)
+            App(label, 0, it)
+        }
     }
 
     override fun onItemSelected(position: Int, selected: Boolean) {
