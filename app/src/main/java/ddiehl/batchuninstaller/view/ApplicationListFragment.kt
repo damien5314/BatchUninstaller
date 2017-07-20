@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar
 import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.*
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
@@ -20,7 +21,6 @@ class ApplicationListFragment : Fragment(), MainView {
     private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
 
     private lateinit var loadingOverlay: ProgressDialog
-    private lateinit var recyclerView: RecyclerView
 
     private val mainPresenter: MainPresenter = MainPresenterImpl(this)
     private val multiSelector: MultiSelector = MultiSelector()
@@ -32,25 +32,19 @@ class ApplicationListFragment : Fragment(), MainView {
         retainInstance = true
     }
 
-    override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, state: Bundle?): View {
         with(inflater.inflate(R.layout.app_list_fragment, container, false)) {
-            initListView(this)
-            initLoadingOverlay(this)
+            val recyclerView = findViewById<RecyclerView>(R.id.recycler_view)
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            adapter = AppAdapter(mainPresenter, multiSelector)
+            recyclerView.adapter = adapter
+
+            loadingOverlay = ProgressDialog(context, R.style.ProgressDialog)
+            loadingOverlay.setCancelable(false)
+            loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+
             return this
         }
-    }
-
-    private fun initListView(root: View) {
-        recyclerView = root.findViewById(R.id.recycler_view)
-        adapter = AppAdapter(mainPresenter, multiSelector)
-        recyclerView.adapter = adapter
-    }
-
-    private fun initLoadingOverlay(root: View) {
-        loadingOverlay = ProgressDialog(root.context, R.style.ProgressDialog)
-        loadingOverlay.setCancelable(false)
-        loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
     }
 
     override fun onStart() {
