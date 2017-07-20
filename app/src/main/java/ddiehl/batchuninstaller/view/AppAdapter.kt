@@ -72,7 +72,7 @@ class AppAdapter(val mPresenter: MainPresenter, val mMultiSelector: MultiSelecto
             if (adapterPosition == -1) return
             if (!mMultiSelector.isSelectable) {
                 mMainPresenter.onItemSelected(adapterPosition, true)
-                mMultiSelector.setSelected(this, true);
+                mMultiSelector.setSelected(this, true)
             } else if (mMultiSelector.tapSelection(this)) {
                 mMainPresenter.onItemSelected(adapterPosition, mMultiSelector.isSelected(adapterPosition, 0))
             } else {
