@@ -7,11 +7,6 @@ import android.content.pm.PackageStats
 import android.net.Uri
 import android.os.Build
 import android.os.UserHandle
-import android.support.v7.view.ContextThemeWrapper
-import android.support.v7.widget.Toolbar
-import android.view.ViewManager
-import ddiehl.batchuninstaller.R
-import org.jetbrains.anko.custom.ankoView
 import timber.log.Timber
 import java.lang.reflect.Method
 
@@ -29,12 +24,12 @@ fun logAllExtras(data: Intent) {
     }
 }
 
-inline fun ViewManager.toolbar(styleRes: Int, init: Toolbar.() -> Unit): Toolbar {
-    return ankoView({
-        if (styleRes == 0) Toolbar(it)
-        else Toolbar(ContextThemeWrapper(it, styleRes), null, R.attr.toolbarStyle)
-    }) { init() }
-}
+//inline fun ViewManager.toolbar(styleRes: Int, init: Toolbar.() -> Unit): Toolbar {
+//    return ankoView({
+//        if (styleRes == 0) Toolbar(it)
+//        else Toolbar(ContextThemeWrapper(it, styleRes), null, R.attr.toolbarStyle)
+//    }) { init() }
+//}
 
 fun PackageStats.getTotalSize(): Long {
     return cacheSize + codeSize + dataSize +
