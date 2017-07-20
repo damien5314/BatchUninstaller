@@ -1,55 +1,55 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-  <!-- Base application theme. -->
-  <style name="AppTheme" parent="AppTheme.Base"/>
+<resources>
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="AppTheme.Base" />
 
-  <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="colorPrimary">@color/primary</item>
-    <item name="colorPrimaryDark">@color/primary_dark</item>
-    <item name="colorAccent">@color/accent</item>
-    <!-- to remove the default action -->
-    <!--<item name="windowNoTitle">true</item>-->
-    <!--<item name="android:windowNoTitle">true</item>-->
-    <item name="windowActionBar">false</item> <!-- For 2.x version -->
-    <!-- This gets the action mode to overlay on AppCompat toolbar instead of native ActionBar -->
-    <item name="windowActionModeOverlay">true</item>
-    <!-- app background color -->
-    <!--<item name="android:windowBackground">@color/primary</item>-->
-    <!-- Sets the color of the CAB -->
-    <item name="actionModeStyle">@style/StyledActionMode</item>
-  </style>
+    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+        <!-- to remove the default action -->
+        <!--<item name="windowNoTitle">true</item>-->
+        <!--<item name="android:windowNoTitle">true</item>-->
+        <item name="windowActionBar">false</item> <!-- For 2.x version -->
+        <!-- This gets the action mode to overlay on AppCompat toolbar instead of native ActionBar -->
+        <item name="windowActionModeOverlay">true</item>
+        <!-- app background color -->
+        <!--<item name="android:windowBackground">@color/primary</item>-->
+        <!-- Sets the color of the CAB -->
+        <item name="actionModeStyle">@style/StyledActionMode</item>
+    </style>
 
-  <style name="StyledActionMode" parent="@style/Widget.AppCompat.ActionMode">
-    <item name="background">@color/color_action_mode_bg</item>
-    <item name="actionMenuTextColor">@color/color_action_mode_text</item>
-  </style>
+    <style name="StyledActionMode" parent="@style/Widget.AppCompat.ActionMode">
+        <item name="background">@color/color_action_mode_bg</item>
+        <item name="actionMenuTextColor">@color/color_action_mode_text</item>
+    </style>
 
-  <style name="ToolbarThemeLightText" parent="AppTheme">
-    <item name="android:textColorPrimary">@android:color/white</item>
-    <item name="actionMenuTextColor">@android:color/white</item>
-    <item name="android:textColorSecondary">@android:color/white</item>
-  </style>
+    <style name="ToolbarThemeLightText" parent="AppTheme">
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="actionMenuTextColor">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+    </style>
 
-  <style name="ProgressDialog" parent="Theme.AppCompat.Dialog">
-    <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
-    <item name="android:windowBackground">@color/transparent</item>
-    <item name="android:textColorPrimary">@color/icons</item>
-    <item name="android:backgroundDimEnabled">true</item>
-    <item name="android:textColor">@color/icons</item>
-    <item name="android:textStyle">normal</item>
-    <item name="android:textSize">12sp</item>
-  </style>
+    <style name="ProgressDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:alertDialogStyle">@style/CustomAlertDialogStyle</item>
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:textColorPrimary">@color/icons</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:textColor">@color/icons</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 
-  <style name="CustomAlertDialogStyle">
-    <item name="android:bottomBright">@color/transparent</item>
-    <item name="android:bottomDark">@color/transparent</item>
-    <item name="android:bottomMedium">@color/transparent</item>
-    <item name="android:centerBright">@color/transparent</item>
-    <item name="android:centerDark">@color/transparent</item>
-    <item name="android:centerMedium">@color/transparent</item>
-    <item name="android:fullBright">@color/transparent</item>
-    <item name="android:fullDark">@color/transparent</item>
-    <item name="android:topBright">@color/transparent</item>
-    <item name="android:topDark">@color/transparent</item>
-  </style>
+    <style name="CustomAlertDialogStyle">
+        <item name="android:bottomBright">@color/transparent</item>
+        <item name="android:bottomDark">@color/transparent</item>
+        <item name="android:bottomMedium">@color/transparent</item>
+        <item name="android:centerBright">@color/transparent</item>
+        <item name="android:centerDark">@color/transparent</item>
+        <item name="android:centerMedium">@color/transparent</item>
+        <item name="android:fullBright">@color/transparent</item>
+        <item name="android:fullDark">@color/transparent</item>
+        <item name="android:topBright">@color/transparent</item>
+        <item name="android:topDark">@color/transparent</item>
+    </style>
 
 </resources>
