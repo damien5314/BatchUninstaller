@@ -9,28 +9,23 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.view.ActionMode
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
 import android.view.*
 import com.bignerdranch.android.multiselector.ModalMultiSelectorCallback
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.utils.getUninstallIntent
-import org.jetbrains.anko.AnkoContext
-import org.jetbrains.anko.find
-import org.jetbrains.anko.support.v4.ctx
 
 class ApplicationListFragment : Fragment(), MainView {
 
     private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
 
-    private lateinit var mLoadingOverlay: ProgressDialog
-    private lateinit var mToolbar: Toolbar
-    private lateinit var mRecyclerView: RecyclerView
+    private lateinit var loadingOverlay: ProgressDialog
+    private lateinit var recyclerView: RecyclerView
 
-    private val mMainPresenter: MainPresenter = MainPresenterImpl(this)
-    private val mMultiSelector: MultiSelector = MultiSelector()
-    private var mActionMode: ActionMode? = null
-    private lateinit var mAdapter: AppAdapter
+    private val mainPresenter: MainPresenter = MainPresenterImpl(this)
+    private val multiSelector: MultiSelector = MultiSelector()
+    private var actionMode: ActionMode? = null
+    private lateinit var adapter: AppAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,71 +34,65 @@ class ApplicationListFragment : Fragment(), MainView {
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view = ApplicationListFragment_UI().createView(AnkoContext.create(ctx, this))
-        initToolbar(view)
-        initListView(view)
-        initLoadingOverlay(view)
-        return view
-    }
-
-    private fun initToolbar(root: View) {
-        mActionMode = null
-        mToolbar = root.find(R.id.toolbar)
-        (activity as AppCompatActivity).setSupportActionBar(mToolbar)
+        with(inflater.inflate(R.layout.app_list_fragment, container, false)) {
+            initListView(this)
+            initLoadingOverlay(this)
+            return this
+        }
     }
 
     private fun initListView(root: View) {
-        mRecyclerView = root.find(R.id.recycler_view)
-        mAdapter = AppAdapter(mMainPresenter, mMultiSelector)
-        mRecyclerView.adapter = mAdapter
+        recyclerView = root.findViewById(R.id.recycler_view)
+        adapter = AppAdapter(mainPresenter, multiSelector)
+        recyclerView.adapter = adapter
     }
 
     private fun initLoadingOverlay(root: View) {
-        mLoadingOverlay = ProgressDialog(root.context, R.style.ProgressDialog)
-        mLoadingOverlay.setCancelable(false)
-        mLoadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        loadingOverlay = ProgressDialog(root.context, R.style.ProgressDialog)
+        loadingOverlay.setCancelable(false)
+        loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
     }
 
     override fun onStart() {
         super.onStart()
-        mMainPresenter.onStart()
+        mainPresenter.onStart()
     }
 
     override fun onStop() {
-        mMainPresenter.onStop()
+        mainPresenter.onStop()
         super.onStop()
     }
 
     override fun showSpinner() {
-        mLoadingOverlay.show()
+        loadingOverlay.show()
     }
 
     override fun dismissSpinner() {
-        if (mLoadingOverlay.isShowing) {
-            mLoadingOverlay.dismiss()
+        if (loadingOverlay.isShowing) {
+            loadingOverlay.dismiss()
         }
     }
 
     override fun notifyDataSetChanged() {
-        mAdapter.notifyDataSetChanged()
+        adapter.notifyDataSetChanged()
     }
 
     override fun onDataUpdated(index: Int) {
-        activity.runOnUiThread { mAdapter.notifyItemChanged(index) }
+        activity.runOnUiThread { adapter.notifyItemChanged(index) }
     }
 
     override fun getSelectedPositions(): List<Int> {
-        return mMultiSelector.selectedPositions
+        return multiSelector.selectedPositions
     }
 
     override fun activateActionMode() {
-        if (mActionMode == null) {
-            mActionMode = (activity as AppCompatActivity).startSupportActionMode(
-                    object : ModalMultiSelectorCallback(mMultiSelector) {
+        if (actionMode == null) {
+            actionMode = (activity as AppCompatActivity).startSupportActionMode(
+                    object : ModalMultiSelectorCallback(multiSelector) {
                         override fun onCreateActionMode(actionMode: ActionMode?, menu: Menu?): Boolean {
                             super.onCreateActionMode(actionMode, menu)
                             activity.menuInflater.inflate(R.menu.context_menu, menu)
-                            mMultiSelector.isSelectable = true
+                            multiSelector.isSelectable = true
                             return true
                         }
 
@@ -112,8 +101,8 @@ class ApplicationListFragment : Fragment(), MainView {
                             when (item.itemId) {
                                 R.id.action_uninstall -> {
                                     mode.finish()
-                                    mMainPresenter.onClickedBatchUninstall()
-                                    mMultiSelector.clearSelections()
+                                    mainPresenter.onClickedBatchUninstall()
+                                    multiSelector.clearSelections()
                                     return true
                                 }
                                 else -> return false
@@ -122,24 +111,24 @@ class ApplicationListFragment : Fragment(), MainView {
 
                         override fun onDestroyActionMode(actionMode: ActionMode?) {
                             super.onDestroyActionMode(actionMode)
-                            mMainPresenter.onSelectionsCleared()
-                            mActionMode = null
+                            mainPresenter.onSelectionsCleared()
+                            this@ApplicationListFragment.actionMode = null
                         }
                     })
         }
     }
 
     override fun finishActionMode() {
-        if (mActionMode != null) {
-            mActionMode!!.finish()
-            mActionMode = null
+        if (actionMode != null) {
+            actionMode!!.finish()
+            actionMode = null
         }
     }
 
     override fun setActionModeInfo(title: String, subtitle: String) {
-        if (mActionMode == null) return
-        mActionMode!!.title = title
-        mActionMode!!.subtitle = subtitle
+        if (actionMode == null) return
+        actionMode!!.title = title
+        actionMode!!.subtitle = subtitle
     }
 
     override fun showUninstallForPackage(packageName: String) {
@@ -150,14 +139,16 @@ class ApplicationListFragment : Fragment(), MainView {
         super.onActivityResult(requestCode, resultCode, data)
         if (data != null) {
             val successful = data.extras.get(EXTRA_INSTALL_RESULT) == 1
-            mMainPresenter.onItemUninstalled(successful)
+            mainPresenter.onItemUninstalled(successful)
         } else {
-            mMainPresenter.onItemUninstalled(false)
+            mainPresenter.onItemUninstalled(false)
         }
     }
 
     override fun showToast(throwable: Throwable) {
-        Snackbar.make(mToolbar, R.string.error, Snackbar.LENGTH_LONG).show()
+        view?.let {
+            Snackbar.make(it, R.string.error, Snackbar.LENGTH_LONG).show()
+        }
     }
 
     override fun getPackageManager(): PackageManager = activity.packageManager

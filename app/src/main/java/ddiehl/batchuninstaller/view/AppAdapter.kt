@@ -34,9 +34,9 @@ class AppAdapter(val presenter: MainPresenter, val multiSelector: MultiSelector)
     class VH(val view: View, val mainPresenter: MainPresenter, val multiSelector: MultiSelector)
         : SwappingHolder(view, multiSelector), View.OnClickListener {
 
-        val name = view.findViewById(R.id.app_name) as TextView
-        val size = view.findViewById(R.id.app_size) as TextView
-        val icon = view.findViewById(R.id.app_icon) as ImageView
+        val name = view.findViewById<TextView>(R.id.app_name)
+        val size = view.findViewById<TextView>(R.id.app_size)
+        val icon = view.findViewById<ImageView>(R.id.app_icon)
 
         init {
             itemView.setOnClickListener(this)
