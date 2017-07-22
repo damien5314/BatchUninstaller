@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:gravity="center"
     android:orientation="horizontal"
     android:padding="8dp">
 
@@ -15,13 +17,15 @@
             android:id="@+id/app_name"
             style="@style/TextAppearance.AppCompat.Medium"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:text="Google Play Music" />
 
         <TextView
             android:id="@+id/app_size"
             style="@style/TextAppearance.AppCompat.Small"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            tools:text="35 MB" />
 
     </LinearLayout>
 
@@ -29,6 +33,7 @@
         android:id="@+id/app_icon"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:contentDescription="@null" />
+        android:contentDescription="@null"
+        tools:src="@mipmap/ic_launcher" />
 
 </LinearLayout>
