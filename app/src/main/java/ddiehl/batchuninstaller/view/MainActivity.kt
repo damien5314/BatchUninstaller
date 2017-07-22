@@ -17,6 +17,7 @@ class MainActivity : AppCompatActivity(), MainView {
     companion object {
         private val LAYOUT_RES_ID = R.layout.main_activity
         private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
+        private val STATE_SELECTED_PACKAGES = "selectedPackages"
     }
 
     private val mainPresenter: MainPresenter = MainPresenter()
@@ -24,16 +25,24 @@ class MainActivity : AppCompatActivity(), MainView {
     private lateinit var adapter: AppAdapter
     private lateinit var loadingOverlay: ProgressDialog
 
+    private val selectedPackages = mutableListOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(LAYOUT_RES_ID)
+
+        savedInstanceState?.let {
+            val packages = savedInstanceState.getStringArrayList(STATE_SELECTED_PACKAGES)
+            selectedPackages.addAll(packages)
+        }
 
         setSupportActionBar(toolbar)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = AppAdapter(this, object : AppAdapter.Listener {
             override fun onItemSelected(app: AppViewModel) {
-                Timber.d("Item clicked @ ${app.name}")
+                Timber.d("Item clicked @ ${app.packageName}")
+                selectedPackages.add(app.packageName)
             }
         })
         recyclerView.adapter = adapter
@@ -53,18 +62,9 @@ class MainActivity : AppCompatActivity(), MainView {
         super.onStop()
     }
 
-    override fun showSpinner() {
-        loadingOverlay.show()
-    }
-
-    override fun dismissSpinner() {
-        if (loadingOverlay.isShowing) {
-            loadingOverlay.dismiss()
-        }
-    }
-
-    override fun showUninstallForPackage(packageName: String) {
-        startActivityForResult(getUninstallIntent(packageName, true), 0)
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putStringArrayList(STATE_SELECTED_PACKAGES, ArrayList(selectedPackages))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -77,11 +77,29 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
-    override fun showToast(throwable: Throwable) {
-        Snackbar.make(chromeView, R.string.error, Snackbar.LENGTH_LONG).show()
-    }
+    //region MainView
 
     override fun showApps(apps: List<AppViewModel>) {
         adapter.showApps(apps)
     }
+
+    override fun showUninstallForPackage(packageName: String) {
+        startActivityForResult(getUninstallIntent(packageName, true), 0)
+    }
+
+    override fun showToast(throwable: Throwable) {
+        Snackbar.make(chromeView, R.string.error, Snackbar.LENGTH_LONG).show()
+    }
+
+    override fun showSpinner() {
+        loadingOverlay.show()
+    }
+
+    override fun dismissSpinner() {
+        if (loadingOverlay.isShowing) {
+            loadingOverlay.dismiss()
+        }
+    }
+
+    //endregion
 }

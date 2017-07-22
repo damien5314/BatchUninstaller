@@ -18,7 +18,6 @@ class AppAdapter(private val mainView: MainView, private val listener: Listener)
     }
 
     private val appList = mutableListOf<AppViewModel>()
-    private val selectedApps = mutableListOf<String>()
 
     override fun getItemCount(): Int = appList.size
 
