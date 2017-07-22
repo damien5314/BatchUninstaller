@@ -10,7 +10,6 @@ import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.AppViewModel
 import ddiehl.batchuninstaller.utils.getUninstallIntent
 import kotlinx.android.synthetic.main.main_activity.*
-import timber.log.Timber
 
 class MainActivity : AppCompatActivity(), MainView {
 
@@ -39,12 +38,7 @@ class MainActivity : AppCompatActivity(), MainView {
         setSupportActionBar(toolbar)
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = AppAdapter(this, object : AppAdapter.Listener {
-            override fun onItemSelected(app: AppViewModel) {
-                Timber.d("Item clicked @ ${app.packageName}")
-                selectedPackages.add(app.packageName)
-            }
-        })
+        adapter = AppAdapter(this, selectedPackages)
         recyclerView.adapter = adapter
 
         loadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
@@ -64,7 +58,9 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putStringArrayList(STATE_SELECTED_PACKAGES, ArrayList(selectedPackages))
+
+        val selectedApps = adapter.selectedPackages
+        outState.putStringArrayList(STATE_SELECTED_PACKAGES, ArrayList(selectedApps))
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
