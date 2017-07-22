@@ -9,11 +9,16 @@ import android.widget.TextView
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.AppViewModel
 import ddiehl.batchuninstaller.utils.formatFileSize
-import timber.log.Timber
 
-class AppAdapter(val mainView: MainView) : RecyclerView.Adapter<AppAdapter.VH>() {
+class AppAdapter(private val mainView: MainView, private val listener: Listener)
+    : RecyclerView.Adapter<AppAdapter.VH>() {
+
+    interface Listener {
+        fun onItemSelected(app: AppViewModel)
+    }
 
     private val appList = mutableListOf<AppViewModel>()
+    private val selectedApps = mutableListOf<String>()
 
     override fun getItemCount(): Int = appList.size
 
@@ -24,10 +29,17 @@ class AppAdapter(val mainView: MainView) : RecyclerView.Adapter<AppAdapter.VH>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(parent.context)
                 .inflate(VH.LAYOUT_RES_ID, parent, false)
-        return VH(view)
+        return VH(view, listener)
     }
 
-    class VH(view: View) : RecyclerView.ViewHolder(view) {
+    fun showApps(apps: List<AppViewModel>) {
+        appList.clear()
+        appList.addAll(apps)
+        notifyDataSetChanged()
+    }
+
+    class VH(view: View, private val listener: Listener)
+        : RecyclerView.ViewHolder(view) {
 
         companion object {
             val LAYOUT_RES_ID = R.layout.app_item
@@ -37,8 +49,14 @@ class AppAdapter(val mainView: MainView) : RecyclerView.Adapter<AppAdapter.VH>()
         val size = view.findViewById<TextView>(R.id.app_size)
         val icon = view.findViewById<ImageView>(R.id.app_icon)
 
+        var app: AppViewModel? = null
+
         init {
-            itemView.setOnClickListener { onItemClick() }
+            itemView.setOnClickListener {
+                if (adapterPosition == -1) return@setOnClickListener
+
+                app?.let { listener.onItemSelected(it) }
+            }
         }
 
         fun bind(app: AppViewModel) {
@@ -47,17 +65,8 @@ class AppAdapter(val mainView: MainView) : RecyclerView.Adapter<AppAdapter.VH>()
             itemView.context.packageManager.getApplicationIcon(app.packageName).let {
                 icon.setImageDrawable(it)
             }
-        }
 
-        private fun onItemClick() {
-            Timber.d("Item clicked @ $adapterPosition")
-            if (adapterPosition == -1) return
+            this.app = app
         }
-    }
-
-    fun showApps(apps: List<AppViewModel>) {
-        appList.clear()
-        appList.addAll(apps)
-        notifyDataSetChanged()
     }
 }

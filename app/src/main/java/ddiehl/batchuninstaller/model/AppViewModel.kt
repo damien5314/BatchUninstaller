@@ -6,14 +6,14 @@ import android.text.TextUtils
 
 data class AppViewModel(
         val name: CharSequence,
-        var size: Long,
-        val packageName: String
+        val packageName: String,
+        var size: Long
 ) : Parcelable {
 
     constructor(p0: Parcel) : this(
             TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel(p0),
-            p0.readLong(),
-            p0.readString()
+            p0.readString(),
+            p0.readLong()
     )
 
     override fun writeToParcel(p0: Parcel, p1: Int) {
@@ -27,7 +27,7 @@ data class AppViewModel(
     }
 
     override fun toString(): String {
-        return "$name :: $size"
+        return "$name :: $packageName :: $size"
     }
 
     companion object CREATOR : Parcelable.Creator<AppViewModel> {
