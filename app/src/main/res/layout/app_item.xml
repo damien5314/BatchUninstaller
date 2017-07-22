@@ -4,7 +4,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="@dimen/item_row_margin">
+        android:padding="8dp">
 
     <LinearLayout
             android:orientation="vertical"
@@ -30,8 +30,8 @@
 
     <ImageView
             android:id="@+id/app_icon"
-            android:layout_width="@dimen/app_icon_width"
-            android:layout_height="@dimen/app_icon_width"/>
+            android:layout_width="48dp"
+            android:layout_height="48dp"/>
 
 
 </LinearLayout>
