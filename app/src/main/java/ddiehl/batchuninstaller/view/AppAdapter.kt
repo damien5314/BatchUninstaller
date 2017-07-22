@@ -1,10 +1,6 @@
 package ddiehl.batchuninstaller.view
 
-import android.content.Context
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.StateListDrawable
 import android.support.v7.widget.RecyclerView
-import android.util.StateSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,37 +23,36 @@ class AppAdapter(val presenter: MainPresenter, val multiSelector: MultiSelector)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.app_item, parent, false)
+                .inflate(VH.LAYOUT_RES_ID, parent, false)
         return VH(view, presenter, multiSelector)
     }
 
     class VH(val view: View, val mainPresenter: MainPresenter, val multiSelector: MultiSelector)
-        : SwappingHolder(view, multiSelector), View.OnClickListener {
+        : SwappingHolder(view, multiSelector) {
+
+        companion object {
+            val LAYOUT_RES_ID = R.layout.app_item
+        }
 
         val name = view.findViewById<TextView>(R.id.app_name)
         val size = view.findViewById<TextView>(R.id.app_size)
         val icon = view.findViewById<ImageView>(R.id.app_icon)
 
         init {
-            itemView.setOnClickListener(this)
-            selectionModeBackgroundDrawable = getAccentStateDrawable(view.context)
-        }
-
-        private fun getAccentStateDrawable(context: Context): Drawable {
-            val stateListDrawable = StateListDrawable()
-            stateListDrawable.addState(StateSet.WILD_CARD, null)
-            return stateListDrawable
+            itemView.setOnClickListener { onItemClick() }
         }
 
         fun bind(app: App) {
             name.text = app.name
             size.text = formatFileSize(app.size, view.context)
-            icon.setImageDrawable(
-                    view.context.packageManager.getApplicationIcon(app.packageName))
+            view.context.packageManager.getApplicationIcon(app.packageName).let {
+                icon.setImageDrawable(it)
+            }
         }
 
-        override fun onClick(v: View) {
+        private fun onItemClick() {
             if (adapterPosition == -1) return
+
             if (!multiSelector.isSelectable) {
                 mainPresenter.onItemSelected(adapterPosition, true)
                 multiSelector.setSelected(this, true)

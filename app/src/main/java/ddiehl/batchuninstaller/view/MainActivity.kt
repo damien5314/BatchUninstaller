@@ -18,15 +18,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.main_activity)
 
-//        actionMode = null
-        toolbar = findViewById(R.id.toolbar)
+        toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
-
-//        if (supportFragmentManager.findFragmentById(R.id.fragment) == null) {
-//            supportFragmentManager.beginTransaction()
-//                    .replace(R.id.fragment, ApplicationListFragment())
-//                    .commit()
-//        }
     }
-
 }
