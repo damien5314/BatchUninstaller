@@ -22,7 +22,7 @@ class ApplicationListFragment : Fragment(), MainView {
 
     private lateinit var loadingOverlay: ProgressDialog
 
-    private val mainPresenter: MainPresenter = MainPresenterImpl(this)
+    private val mainPresenter: MainPresenter = MainPresenter()
     private val multiSelector: MultiSelector = MultiSelector()
     private var actionMode: ActionMode? = null
     private lateinit var adapter: AppAdapter
@@ -49,11 +49,11 @@ class ApplicationListFragment : Fragment(), MainView {
 
     override fun onStart() {
         super.onStart()
-        mainPresenter.onStart()
+        mainPresenter.onViewAttached(this)
     }
 
     override fun onStop() {
-        mainPresenter.onStop()
+        mainPresenter.onViewDetached(this)
         super.onStop()
     }
 
