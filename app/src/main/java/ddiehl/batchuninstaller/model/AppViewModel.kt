@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import android.text.TextUtils
 
-data class App(
+data class AppViewModel(
         val name: CharSequence,
         var size: Long,
         val packageName: String
@@ -30,12 +30,12 @@ data class App(
         return "$name :: $size"
     }
 
-    companion object CREATOR : Parcelable.Creator<App> {
-        override fun createFromParcel(parcel: Parcel): App {
-            return App(parcel)
+    companion object CREATOR : Parcelable.Creator<AppViewModel> {
+        override fun createFromParcel(parcel: Parcel): AppViewModel {
+            return AppViewModel(parcel)
         }
 
-        override fun newArray(size: Int): Array<App?> {
+        override fun newArray(size: Int): Array<AppViewModel?> {
             return arrayOfNulls(size)
         }
     }

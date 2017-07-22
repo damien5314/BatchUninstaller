@@ -11,6 +11,7 @@ buildscript {
 
         RXJAVA2_VERSION = "2.0.8"
         RXJAVA2_ANDROID_VERSION = "2.0.1"
+        TIMBER_VERSION = "4.5.1"
     }
 
     repositories {

@@ -3,56 +3,30 @@ package ddiehl.batchuninstaller.view
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_ACTIVITIES
-import ddiehl.batchuninstaller.CustomApplication
-import ddiehl.batchuninstaller.R
-import ddiehl.batchuninstaller.model.App
-import ddiehl.batchuninstaller.utils.formatFileSize
+import ddiehl.batchuninstaller.model.AppViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
-import java.util.*
-import kotlin.collections.ArrayList
 
 class MainPresenter {
+
+    companion object {
+        private const val ANDROID_PACKAGE_PREFIX = "com.android"
+    }
     
     private var mainView: MainView? = null
 
-    private val context = CustomApplication.context
-    private val appList: ArrayList<App> = ArrayList()
+    private val appList: ArrayList<AppViewModel> = ArrayList()
 
     private val subscriptions = CompositeDisposable()
-
-    fun saveData(): ArrayList<App> = appList
-    
-    fun restoreData(list: ArrayList<App>) {
-        appList.clear()
-        appList.addAll(list)
-    }
-
-    private val uninstallQueue = LinkedList<App>()
-    private var uninstallApp: App? = null
-
-    private var numSelected: Int = 0
-    private var selectedSize: Long = 0
-
-    fun getNumItems(): Int = appList.size
-
-    fun getItemAt(position: Int): App {
-        return appList[position]
-    }
 
     fun onViewAttached(view: MainView) {
         mainView = view
         
         if (appList.isEmpty()) {
             loadApplicationData()
-        }
-
-        if (numSelected > 0) {
-            view.activateActionMode()
-            showActionModeInfo()
         }
     }
 
@@ -72,88 +46,34 @@ class MainPresenter {
                         mainView.showSpinner()
                     }
                     .doFinally { mainView.dismissSpinner() }
-                    .subscribe({ apps ->
-                        appList.clear()
-                        appList.addAll(apps)
-                        mainView.notifyDataSetChanged()
-                    }, { error ->
-                        Timber.e(error, "Error processing packages")
-                        mainView.showToast(error)
-                    })
+                    .subscribe(this::onAppsLoaded, this::onAppsLoadError)
         }
     }
 
-    private fun getApps(packageManager: PackageManager): Observable<List<App>> {
+    private fun onAppsLoaded(apps: List<AppViewModel>) {
+        mainView?.showApps(apps)
+    }
+
+    private fun onAppsLoadError(error: Throwable) {
+        Timber.e(error, "Error processing packages")
+        mainView?.showToast(error)
+    }
+
+    private fun getApps(packageManager: PackageManager): Observable<List<AppViewModel>> {
         return Observable.defer {
             val packageList: List<PackageInfo> = packageManager.getInstalledPackages(GET_ACTIVITIES)
-            val packageSet: MutableSet<String> = HashSet()
 
-            packageList.forEach { pkg ->
-                val intent = packageManager.getLaunchIntentForPackage(pkg.packageName)
-                if (intent != null && !pkg.packageName.startsWith("com.android")) {
-                    packageSet.add(pkg.packageName)
-                    Timber.d("app: ${pkg.packageName}")
-                }
-            }
-
-            val apps = packageSet.map {
-                val applicationInfo = packageManager.getApplicationInfo(it, 0)
-                val label = packageManager.getApplicationLabel(applicationInfo)
-                App(label, 0, it)
-            }
+            val apps = packageList
+                    .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
+                    .filter { pkg -> packageManager.getLaunchIntentForPackage(pkg.packageName) != null }
+                    .map { pkg -> pkg.packageName }
+                    .map { name ->
+                        val applicationInfo = packageManager.getApplicationInfo(name, 0)
+                        val label = packageManager.getApplicationLabel(applicationInfo)
+                        AppViewModel(label, 0, name)
+                    }
 
             Observable.just(apps)
         }
-    }
-
-    //FIXME this should probably be in the view, not presenter
-    fun onItemSelected(position: Int, selected: Boolean) {
-        mainView?.activateActionMode()
-        val app = appList[position]
-        if (selected) {
-            numSelected++
-            selectedSize += app.size
-        } else {
-            numSelected--
-            selectedSize -= app.size
-        }
-        if (numSelected == 0) {
-            mainView?.finishActionMode()
-        } else {
-            showActionModeInfo()
-        }
-    }
-
-    private fun showActionModeInfo() {
-        mainView?.setActionModeInfo(
-                context.resources.getQuantityString(R.plurals.items_selected, numSelected, numSelected),
-                formatFileSize(selectedSize, context))
-    }
-
-    fun onClickedBatchUninstall() {
-        mainView?.let { view ->
-            val apps = view.getSelectedPositions().map { appList[it] }
-            uninstallQueue.addAll(apps)
-            processQueue()
-        }
-    }
-
-    fun onSelectionsCleared() {
-        numSelected = 0
-        selectedSize = 0
-    }
-
-    fun onItemUninstalled(success: Boolean) {
-        if (success) {
-            appList.remove(uninstallApp)
-            mainView?.notifyDataSetChanged()
-        }
-        processQueue()
-    }
-
-    private fun processQueue() {
-        if (uninstallQueue.isEmpty()) return
-        uninstallApp = uninstallQueue.pop()
-        mainView?.showUninstallForPackage(uninstallApp!!.packageName)
     }
 }
