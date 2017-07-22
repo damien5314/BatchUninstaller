@@ -15,7 +15,7 @@ class MainPresenter {
     companion object {
         private const val ANDROID_PACKAGE_PREFIX = "com.android"
     }
-    
+
     private var mainView: MainView? = null
 
     private val appList: ArrayList<AppViewModel> = ArrayList()
@@ -24,7 +24,7 @@ class MainPresenter {
 
     fun onViewAttached(view: MainView) {
         mainView = view
-        
+
         if (appList.isEmpty()) {
             loadApplicationData()
         }

@@ -27,7 +27,7 @@ class AppAdapter(val mainView: MainView) : RecyclerView.Adapter<AppAdapter.VH>()
         return VH(view)
     }
 
-    class VH(view: View): RecyclerView.ViewHolder(view) {
+    class VH(view: View) : RecyclerView.ViewHolder(view) {
 
         companion object {
             val LAYOUT_RES_ID = R.layout.app_item
