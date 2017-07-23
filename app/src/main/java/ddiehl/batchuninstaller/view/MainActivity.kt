@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.AppViewModel
 import ddiehl.batchuninstaller.utils.getUninstallIntent
+import ddiehl.batchuninstaller.utils.setBackgroundColor
 import kotlinx.android.synthetic.main.main_activity.*
 
 class MainActivity : AppCompatActivity(), MainView {
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(LAYOUT_RES_ID)
+        setBackgroundColor(R.color.gray)
 
         savedInstanceState?.let {
             val packages = savedInstanceState.getStringArrayList(STATE_SELECTED_PACKAGES)
