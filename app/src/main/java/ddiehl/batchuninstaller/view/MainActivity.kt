@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.AppViewModel
 import ddiehl.batchuninstaller.utils.getUninstallIntent
@@ -25,22 +26,21 @@ class MainActivity : AppCompatActivity(), MainView {
     private lateinit var adapter: AppAdapter
     private lateinit var loadingOverlay: ProgressDialog
 
-    private val selectedPackages = mutableListOf<String>()
+    private val multiSelector = MultiSelector()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(LAYOUT_RES_ID)
         setBackgroundColor(R.color.gray)
-
-        savedInstanceState?.let {
-            val packages = savedInstanceState.getStringArrayList(STATE_SELECTED_PACKAGES)
-            selectedPackages.addAll(packages)
-        }
-
         setSupportActionBar(toolbar)
 
+        savedInstanceState?.let {
+            val packages = savedInstanceState.getBundle(STATE_SELECTED_PACKAGES)
+            multiSelector.restoreSelectionStates(packages)
+        }
+
         recyclerView.layoutManager = LinearLayoutManager(this)
-        adapter = AppAdapter(this, selectedPackages)
+        adapter = AppAdapter(this, multiSelector)
         recyclerView.adapter = adapter
 
         loadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
@@ -61,8 +61,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val selectedApps = adapter.selectedPackages
-        outState.putStringArrayList(STATE_SELECTED_PACKAGES, ArrayList(selectedApps))
+        outState.putBundle(STATE_SELECTED_PACKAGES, multiSelector.saveSelectionStates())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
