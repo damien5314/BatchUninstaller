@@ -5,7 +5,7 @@ import android.widget.CheckBox
 import android.widget.ImageView
 import android.widget.TextView
 import com.bignerdranch.android.multiselector.MultiSelector
-import com.bignerdranch.android.multiselector.SwappingHolder
+import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.AppViewModel
 import ddiehl.batchuninstaller.utils.formatFileSize
@@ -13,7 +13,7 @@ import ddiehl.batchuninstaller.utils.formatFileSize
 class AppViewHolder(
         view: View,
         private val multiSelector: MultiSelector
-) : SwappingHolder(view, multiSelector), View.OnClickListener {
+) : MultiSelectorBindingHolder(view, multiSelector), View.OnClickListener {
 
     companion object {
         val LAYOUT_RES_ID = R.layout.app_item
@@ -28,6 +28,7 @@ class AppViewHolder(
 
     init {
         itemView.setOnClickListener(this)
+        checkbox.isClickable = false
     }
 
     fun bind(app: AppViewModel, isSelected: Boolean) {
@@ -49,4 +50,27 @@ class AppViewHolder(
         }
         multiSelector.tapSelection(this)
     }
+
+    //region MultiSelectorBindingHolder
+
+    private var isActivated: Boolean = false
+
+    override fun isActivated(): Boolean {
+        return isActivated
+    }
+
+    override fun setActivated(isActivated: Boolean) {
+        this.isActivated = isActivated
+        checkbox.isChecked = isActivated
+    }
+
+    override fun isSelectable(): Boolean {
+        return true
+    }
+
+    override fun setSelectable(p0: Boolean) {
+        // no-op
+    }
+
+    //endregion
 }
