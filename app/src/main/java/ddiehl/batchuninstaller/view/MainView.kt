@@ -1,7 +1,6 @@
 package ddiehl.batchuninstaller.view;
 
 import android.content.pm.PackageManager
-import ddiehl.batchuninstaller.model.AppViewModel
 
 interface MainView {
 

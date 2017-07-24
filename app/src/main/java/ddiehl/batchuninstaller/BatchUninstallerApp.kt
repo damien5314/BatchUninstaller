@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 import timber.log.Timber
 
-public class CustomApplication : Application() {
+public class BatchUninstallerApp : Application() {
     companion object {
         lateinit var context: Context
     }

@@ -3,7 +3,6 @@ package ddiehl.batchuninstaller.view
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_ACTIVITIES
-import ddiehl.batchuninstaller.model.AppViewModel
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

@@ -7,7 +7,6 @@ import android.widget.TextView
 import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder
 import ddiehl.batchuninstaller.R
-import ddiehl.batchuninstaller.model.AppViewModel
 import ddiehl.batchuninstaller.utils.formatFileSize
 
 class AppViewHolder(

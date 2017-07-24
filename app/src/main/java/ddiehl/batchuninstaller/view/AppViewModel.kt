@@ -1,4 +1,4 @@
-package ddiehl.batchuninstaller.model
+package ddiehl.batchuninstaller.view
 
 import android.os.Parcel
 import android.os.Parcelable

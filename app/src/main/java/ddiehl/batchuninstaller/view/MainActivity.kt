@@ -11,7 +11,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
-import ddiehl.batchuninstaller.model.AppViewModel
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import kotlinx.android.synthetic.main.main_activity.*
 
