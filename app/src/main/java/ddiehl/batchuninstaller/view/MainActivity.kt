@@ -27,8 +27,10 @@ class MainActivity : AppCompatActivity(), MainView {
 
     private lateinit var adapter: AppAdapter
     private lateinit var loadingOverlay: ProgressDialog
-
     private val multiSelector = MultiSelector()
+
+    override val appList = mutableListOf<AppViewModel>()
+    private var selectedPackages: Array<String>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +39,7 @@ class MainActivity : AppCompatActivity(), MainView {
         setSupportActionBar(toolbar)
 
         savedInstanceState?.let {
-            val packages = savedInstanceState.getBundle(STATE_SELECTED_PACKAGES)
-            multiSelector.restoreSelectionStates(packages)
+            selectedPackages = savedInstanceState.getStringArray(STATE_SELECTED_PACKAGES)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -63,7 +64,12 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        outState.putBundle(STATE_SELECTED_PACKAGES, multiSelector.saveSelectionStates())
+        val selectedPackages =
+                multiSelector.selectedPositions.map { position -> appList[position] }
+                        .map { app -> app.packageName }
+                        .toTypedArray()
+
+        outState.putStringArray(STATE_SELECTED_PACKAGES, selectedPackages)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -79,7 +85,19 @@ class MainActivity : AppCompatActivity(), MainView {
     //region MainView
 
     override fun showApps(apps: List<AppViewModel>) {
-        adapter.showApps(apps)
+        appList.clear()
+        appList.addAll(apps)
+
+        selectedPackages?.let { selectedPackages ->
+            appList.forEachIndexed { index, appViewModel ->
+                if (selectedPackages.contains(appViewModel.packageName)) {
+                    multiSelector.setSelected(index, 0, true)
+                }
+            }
+            this.selectedPackages = null
+        }
+
+        adapter.notifyDataSetChanged()
     }
 
     override fun showToast(throwable: Throwable) {

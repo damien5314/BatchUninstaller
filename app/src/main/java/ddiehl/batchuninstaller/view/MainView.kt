@@ -5,6 +5,8 @@ import ddiehl.batchuninstaller.model.AppViewModel
 
 interface MainView {
 
+    val appList: List<AppViewModel>
+
     fun getPackageManager(): PackageManager
 
     fun showApps(apps: List<AppViewModel>)
