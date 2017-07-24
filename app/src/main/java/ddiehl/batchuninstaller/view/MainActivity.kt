@@ -6,10 +6,12 @@ import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.AppViewModel
-import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import kotlinx.android.synthetic.main.main_activity.*
 
@@ -80,12 +82,8 @@ class MainActivity : AppCompatActivity(), MainView {
         adapter.showApps(apps)
     }
 
-    override fun showUninstallForPackage(packageName: String) {
-        startActivityForResult(getUninstallIntent(packageName, true), 0)
-    }
-
     override fun showToast(throwable: Throwable) {
-        Snackbar.make(chromeView, R.string.error, Snackbar.LENGTH_LONG).show()
+        Snackbar.make(chromeView, R.string.error_getting_app_info, Snackbar.LENGTH_LONG).show()
     }
 
     override fun showSpinner() {
@@ -99,4 +97,34 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     //endregion
+
+    //region Options menu
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.context_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_uninstall -> {
+                onUninstallClicked()
+                return true
+            }
+        }
+        return false
+    }
+
+    //endregion
+
+    private fun onUninstallClicked() {
+        val selectedPositions = multiSelector.selectedPositions
+
+        if (selectedPositions.isEmpty()) {
+            Toast.makeText(this, R.string.error_no_apps_selected, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        //TODO launch uninstall flow
+    }
 }

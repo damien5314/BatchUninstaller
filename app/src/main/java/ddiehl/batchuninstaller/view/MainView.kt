@@ -9,8 +9,6 @@ interface MainView {
 
     fun showApps(apps: List<AppViewModel>)
 
-    fun showUninstallForPackage(packageName: String)
-
     fun showToast(throwable: Throwable)
 
     fun showSpinner()

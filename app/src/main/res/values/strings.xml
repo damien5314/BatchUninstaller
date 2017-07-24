@@ -1,9 +1,12 @@
 <resources>
+
     <string name="app_name">Batch Uninstaller</string>
     <string name="action_uninstall">Uninstall</string>
     <plurals name="items_selected">
         <item quantity="one">%d app selected</item>
         <item quantity="other">%d apps selected</item>
     </plurals>
-    <string name="error">error retrieving application info</string>
+    <string name="error_getting_app_info">Error retrieving application info</string>
+    <string name="error_no_apps_selected">Error: no apps selected</string>
+
 </resources>

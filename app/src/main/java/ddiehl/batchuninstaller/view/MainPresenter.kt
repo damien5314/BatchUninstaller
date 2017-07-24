@@ -9,6 +9,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
+import java.util.*
 
 class MainPresenter {
 
@@ -73,6 +74,7 @@ class MainPresenter {
                         AppViewModel(label, name, 0)
                     }
 
+            Collections.shuffle(apps)
             Observable.just(apps)
         }
     }
