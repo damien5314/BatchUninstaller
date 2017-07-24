@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
+import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import kotlinx.android.synthetic.main.main_activity.*
 
@@ -18,8 +19,12 @@ class MainActivity : AppCompatActivity(), MainView {
 
     companion object {
         private val LAYOUT_RES_ID = R.layout.main_activity
-        private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
+        private val RC_UNINSTALL_APP = 10
         private val STATE_SELECTED_PACKAGES = "selectedPackages"
+
+        // Values returned from Android uninstall Activity, cannot modify
+        private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
+        private val EXTRA_UNINSTALL_RESULT_SUCCESS = 1
     }
 
     private val mainPresenter: MainPresenter = MainPresenter()
@@ -30,6 +35,7 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override val appList = mutableListOf<AppViewModel>()
     private var selectedPackages: Array<String>? = null
+    private var appUninstallRequested: AppViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +80,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (data != null) {
-            val successful = data.extras.get(EXTRA_INSTALL_RESULT) == 1
+            val successful = data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
 //            mainPresenter.onItemUninstalled(successful)
         } else {
 //            mainPresenter.onItemUninstalled(false)
@@ -142,6 +148,12 @@ class MainActivity : AppCompatActivity(), MainView {
             return
         }
 
-        //TODO launch uninstall flow
+        val appToUninstall = appList[selectedPositions.first()]
+        val uninstallIntent = getUninstallIntent(appToUninstall.packageName, true)
+
+        packageManager.resolveActivity(uninstallIntent, 0).let {
+            appUninstallRequested = appToUninstall
+            startActivityForResult(uninstallIntent, RC_UNINSTALL_APP)
+        }
     }
 }

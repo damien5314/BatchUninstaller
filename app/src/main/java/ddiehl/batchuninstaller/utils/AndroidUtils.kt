@@ -10,26 +10,12 @@ import android.os.UserHandle
 import timber.log.Timber
 import java.lang.reflect.Method
 
-fun getUninstallIntent(packageName: String, returnResult: Boolean): Intent {
-    val intent = Intent(
-            Intent.ACTION_UNINSTALL_PACKAGE,
-            Uri.parse("package:" + packageName));
-    intent.putExtra(Intent.EXTRA_RETURN_RESULT, returnResult)
-    return intent
-}
-
-fun logAllExtras(data: Intent) {
-    data.extras.keySet().forEach {
-        Timber.d("EXTRA -> " + it)
-    }
-}
-
-//inline fun ViewManager.toolbar(styleRes: Int, init: Toolbar.() -> Unit): Toolbar {
-//    return ankoView({
-//        if (styleRes == 0) Toolbar(it)
-//        else Toolbar(ContextThemeWrapper(it, styleRes), null, R.attr.toolbarStyle)
-//    }) { init() }
-//}
+fun getUninstallIntent(packageName: String, returnResult: Boolean): Intent =
+        Intent().apply {
+            action = Intent.ACTION_UNINSTALL_PACKAGE
+            data = Uri.parse("package:" + packageName)
+            putExtra(Intent.EXTRA_RETURN_RESULT, returnResult)
+        }
 
 fun PackageStats.getTotalSize(): Long {
     return cacheSize + codeSize + dataSize +
