@@ -1,17 +1,20 @@
-package ddiehl.batchuninstaller;
+package ddiehl.batchuninstaller
 
 import android.app.Application
-import android.content.Context
 import timber.log.Timber
 
-public class BatchUninstallerApp : Application() {
+class BatchUninstallerApp : Application() {
+
     companion object {
-        lateinit var context: Context
+        lateinit var app: BatchUninstallerApp
     }
 
     override fun onCreate() {
         super.onCreate()
-        context = this
-        Timber.plant(Timber.DebugTree())
+        app = this
+
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        }
     }
 }
