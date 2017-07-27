@@ -79,11 +79,13 @@ class MainActivity : AppCompatActivity(), MainView {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (data != null) {
-            val successful = data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
-//            mainPresenter.onItemUninstalled(successful)
-        } else {
-//            mainPresenter.onItemUninstalled(false)
+
+        if (requestCode != RC_UNINSTALL_APP) return
+        if (data == null) return
+
+        val successful = data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
+        if (successful) {
+            //TODO
         }
     }
 
