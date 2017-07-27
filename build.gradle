@@ -1,7 +1,7 @@
 buildscript {
     ext {
-        ANDROID_GRADLE_PLUGIN = '3+'
-        BUILD_TOOLS_VERSION = '26'
+        ANDROID_GRADLE_PLUGIN = '3.0.0-alpha8'
+        BUILD_TOOLS_VERSION = '26.0.1'
         COMPILE_SDK_VERSION = 26
         TARGET_SDK_VERSION = 26
 
@@ -20,7 +20,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.0.0-alpha7'
+        classpath "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
 
         // NOTE: Do not place your application dependencies here; they belong
