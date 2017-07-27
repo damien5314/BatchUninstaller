@@ -1,8 +1,8 @@
 package ddiehl.batchuninstaller.applist
 
-import android.content.pm.PackageInfo
-import android.content.pm.PackageManager
 import android.content.pm.PackageManager.GET_ACTIVITIES
+import ddiehl.batchuninstaller.model.appinfo.IPackageInfo
+import ddiehl.batchuninstaller.model.appinfo.IPackageManager
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -10,7 +10,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 import java.util.*
 
-class MainPresenter {
+class MainPresenter(private val packageManager: IPackageManager) {
 
     companion object {
         private const val ANDROID_PACKAGE_PREFIX = "com.android"
@@ -37,7 +37,6 @@ class MainPresenter {
 
     private fun loadApplicationData() {
         mainView?.let { mainView ->
-            val packageManager: PackageManager = mainView.getPackageManager()
             getApps(packageManager)
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -59,9 +58,9 @@ class MainPresenter {
         mainView?.showToast(error)
     }
 
-    private fun getApps(packageManager: PackageManager): Observable<List<AppViewModel>> {
+    private fun getApps(packageManager: IPackageManager): Observable<List<AppViewModel>> {
         return Observable.defer {
-            val packageList: List<PackageInfo> = packageManager.getInstalledPackages(GET_ACTIVITIES)
+            val packageList: List<IPackageInfo> = packageManager.getInstalledPackages(GET_ACTIVITIES)
 
             val apps = packageList
                     .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
@@ -70,7 +69,7 @@ class MainPresenter {
                     .map { name ->
                         val applicationInfo = packageManager.getApplicationInfo(name, 0)
                         val label = packageManager.getApplicationLabel(applicationInfo)
-                        AppViewModel(label.toString(), name, 0)
+                        AppViewModel(label, name, 0)
                     }
 
             Collections.shuffle(apps)

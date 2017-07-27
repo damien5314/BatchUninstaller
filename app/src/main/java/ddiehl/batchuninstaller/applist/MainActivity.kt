@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
+import ddiehl.batchuninstaller.model.appinfo.impl.APackageManager
 import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import kotlinx.android.synthetic.main.main_activity.*
@@ -27,8 +28,7 @@ class MainActivity : AppCompatActivity(), MainView {
         private val EXTRA_UNINSTALL_RESULT_SUCCESS = 1
     }
 
-    private val mainPresenter: MainPresenter = MainPresenter()
-
+    private lateinit var mainPresenter: MainPresenter
     private lateinit var adapter: AppAdapter
     private lateinit var loadingOverlay: ProgressDialog
     private val multiSelector = MultiSelector()
@@ -54,6 +54,8 @@ class MainActivity : AppCompatActivity(), MainView {
         loadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
         loadingOverlay.setCancelable(false)
         loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
+
+        mainPresenter = MainPresenter(packageManager = APackageManager(packageManager))
     }
 
     override fun onStart() {
