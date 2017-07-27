@@ -1,6 +1,5 @@
 package ddiehl.batchuninstaller.view
 
-import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -48,12 +47,10 @@ class AppViewHolder(
                 .subscribe { icon.setImageDrawable(it) }
     }
 
-    private fun getAppIcon(appViewModel: AppViewModel): Maybe<Drawable> {
-        return Maybe.defer {
-            val applicationIcon = itemView.context.packageManager
-                    .getApplicationIcon(appViewModel.packageName)
-            applicationIcon?.let { Maybe.just(it) } ?: Maybe.empty()
-        }
+    private fun getAppIcon(appViewModel: AppViewModel) = Maybe.defer {
+        val applicationIcon = itemView.context.packageManager
+                .getApplicationIcon(appViewModel.packageName)
+        applicationIcon?.let { Maybe.just(it) } ?: Maybe.empty()
     }
 
     override fun onClick(view: View) {
@@ -78,13 +75,9 @@ class AppViewHolder(
         checkbox.isChecked = isActivated
     }
 
-    override fun isSelectable(): Boolean {
-        return true
-    }
+    override fun isSelectable(): Boolean = true
 
-    override fun setSelectable(p0: Boolean) {
-        // no-op
-    }
+    override fun setSelectable(p0: Boolean) = Unit // no-op
 
     //endregion
 }
