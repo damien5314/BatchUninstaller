@@ -1,5 +1,6 @@
 package ddiehl.batchuninstaller.view
 
+import android.graphics.drawable.Drawable
 import android.view.View
 import android.widget.CheckBox
 import android.widget.ImageView
@@ -8,6 +9,9 @@ import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.utils.formatFileSize
+import io.reactivex.Maybe
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 
 class AppViewHolder(
         view: View,
@@ -35,10 +39,21 @@ class AppViewHolder(
 
         name.text = app.name
         size.text = formatFileSize(app.size, itemView.context)
-        itemView.context.packageManager.getApplicationIcon(app.packageName).let {
-            icon.setImageDrawable(it)
-        }
         checkbox.isChecked = isSelected
+
+        getAppIcon(app)
+                .subscribeOn(Schedulers.computation())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doOnSubscribe { icon.setImageDrawable(null) }
+                .subscribe { icon.setImageDrawable(it) }
+    }
+
+    private fun getAppIcon(appViewModel: AppViewModel): Maybe<Drawable> {
+        return Maybe.defer {
+            val applicationIcon = itemView.context.packageManager
+                    .getApplicationIcon(appViewModel.packageName)
+            applicationIcon?.let { Maybe.just(it) } ?: Maybe.empty()
+        }
     }
 
     override fun onClick(view: View) {
