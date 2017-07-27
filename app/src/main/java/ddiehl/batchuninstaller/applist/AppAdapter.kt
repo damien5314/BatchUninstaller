@@ -1,4 +1,4 @@
-package ddiehl.batchuninstaller.view
+package ddiehl.batchuninstaller.applist
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater

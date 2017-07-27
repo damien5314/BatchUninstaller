@@ -1,4 +1,4 @@
-package ddiehl.batchuninstaller.view
+package ddiehl.batchuninstaller.applist
 
 import android.app.ProgressDialog
 import android.content.Intent
