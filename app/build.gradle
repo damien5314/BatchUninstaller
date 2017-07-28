@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 repositories {
     google()
@@ -27,10 +28,9 @@ dependencies {
     compile "com.android.support:design:$SUPPORT_LIBRARY_VERSION"
     compile "com.android.support:appcompat-v7:$SUPPORT_LIBRARY_VERSION"
 
-    compile "com.jakewharton.timber:timber:4.5.1"
+    compile "com.jakewharton.timber:timber:$TIMBER_VERSION"
 
     compile "io.reactivex.rxjava2:rxjava:$RXJAVA2_VERSION"
     compile "io.reactivex.rxjava2:rxandroid:$RXJAVA2_ANDROID_VERSION"
-
-    compile "com.bignerdranch.android:recyclerview-multiselect:0.2"
+    compile "com.bignerdranch.android:recyclerview-multiselect:$RECYCLERVIEW_MULTISELECT_VERSION"
 }

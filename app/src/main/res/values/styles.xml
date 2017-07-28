@@ -2,20 +2,10 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="AppTheme.Base" />
 
-    <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="AppTheme.Base" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryDark">@color/primary_dark</item>
         <item name="colorAccent">@color/accent</item>
-        <!-- to remove the default action -->
-        <!--<item name="windowNoTitle">true</item>-->
-        <!--<item name="android:windowNoTitle">true</item>-->
-        <item name="windowActionBar">false</item> <!-- For 2.x version -->
-        <!-- This gets the action mode to overlay on AppCompat toolbar instead of native ActionBar -->
-        <item name="windowActionModeOverlay">true</item>
-        <!-- app background color -->
-        <!--<item name="android:windowBackground">@color/primary</item>-->
-        <!-- Sets the color of the CAB -->
-        <item name="actionModeStyle">@style/StyledActionMode</item>
     </style>
 
     <style name="StyledActionMode" parent="@style/Widget.AppCompat.ActionMode">
