@@ -13,6 +13,8 @@
     <color name="color_action_mode_text">@android:color/white</color>
 
     <color name="transparent">#00000000</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="gray">#444442</color>
     <color name="green">#89c624</color>
     <color name="red">#ee4444</color>
