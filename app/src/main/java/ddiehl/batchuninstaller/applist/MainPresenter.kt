@@ -1,6 +1,6 @@
 package ddiehl.batchuninstaller.applist
 
-import android.content.pm.PackageManager.GET_ACTIVITIES
+import android.content.pm.PackageManager
 import ddiehl.batchuninstaller.model.appinfo.IPackageInfo
 import ddiehl.batchuninstaller.model.appinfo.IPackageManager
 import io.reactivex.Observable
@@ -60,7 +60,7 @@ class MainPresenter(private val packageManager: IPackageManager) {
 
     private fun getApps(packageManager: IPackageManager): Observable<List<AppViewModel>> {
         return Observable.defer {
-            val packageList: List<IPackageInfo> = packageManager.getInstalledPackages(GET_ACTIVITIES)
+            val packageList: List<IPackageInfo> = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES)
 
             val apps = packageList
                     .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
