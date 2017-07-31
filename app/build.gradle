@@ -16,6 +16,8 @@ android {
         targetSdkVersion TARGET_SDK_VERSION
         versionCode 1
         versionName "1.0"
+
+        testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
 }
 
@@ -33,4 +35,22 @@ dependencies {
     compile "io.reactivex.rxjava2:rxjava:$RXJAVA2_VERSION"
     compile "io.reactivex.rxjava2:rxandroid:$RXJAVA2_ANDROID_VERSION"
     compile "com.bignerdranch.android:recyclerview-multiselect:$RECYCLERVIEW_MULTISELECT_VERSION"
+
+    // Test dependencies
+    testCompile "junit:junit:$JUNIT_VERSION"
+    androidTestCompile "com.android.support.test:runner:$ANDROID_TESTING_SUPPORT_VERSION"
+    androidTestCompile "com.android.support.test:rules:$ANDROID_TESTING_SUPPORT_VERSION"
+    androidTestImplementation "org.mockito:mockito-core:$MOCKITO_VERSION"
+    androidTestImplementation "org.mockito:mockito-android:$MOCKITO_VERSION"
+
+    // Espresso dependencies
+//    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.0'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-contrib:3.0.0'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-intents:3.0.0'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-accessibility:3.0.0'
+//    androidTestCompile 'com.android.support.test.espresso:espresso-web:3.0.0'
+//    androidTestCompile 'com.android.support.test.espresso.idling:idling-concurrent:3.0.0'
+//    // The following Espresso dependency can be either "compile"
+//    // or "androidTestCompile", depending on your app's implementation
+//    androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:3.0.0'
 }
