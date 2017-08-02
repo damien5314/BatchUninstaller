@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        ANDROID_GRADLE_PLUGIN = '3.0.0-alpha8'
+        ANDROID_GRADLE_PLUGIN = '3.0.0-alpha9'
         BUILD_TOOLS_VERSION = '26.0.1'
         COMPILE_SDK_VERSION = 26
         TARGET_SDK_VERSION = 26
