@@ -9,6 +9,8 @@ data class AppViewModel(
         var size: Long
 ) : Parcelable {
 
+    //region Parcelable
+
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
@@ -21,12 +23,12 @@ data class AppViewModel(
         p0.writeLong(size)
     }
 
-    override fun describeContents(): Int = throw UnsupportedOperationException()
-
-    override fun toString(): String = "$name :: $packageName :: $size"
+    override fun describeContents(): Int = 0
 
     companion object CREATOR : Parcelable.Creator<AppViewModel> {
         override fun createFromParcel(parcel: Parcel): AppViewModel = AppViewModel(parcel)
         override fun newArray(size: Int): Array<AppViewModel?> = arrayOfNulls(size)
     }
+
+    //endregion
 }

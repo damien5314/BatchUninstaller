@@ -57,7 +57,10 @@ class MainActivity : AppCompatActivity(), MainView {
         loadingOverlay.setCancelable(false)
         loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
 
-        mainPresenter = MainPresenter(packageManager = APackageManager(packageManager))
+        mainPresenter = MainPresenter(
+                packageManager = APackageManager(packageManager),
+                appDataLoader = AppDataLoader()
+        )
     }
 
     override fun onStart() {
