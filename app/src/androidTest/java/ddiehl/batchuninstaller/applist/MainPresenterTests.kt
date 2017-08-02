@@ -7,7 +7,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Mockito.mock
 import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
@@ -59,7 +58,7 @@ class MainPresenterTests {
         val observable = Observable.just(apps)
 
         val mock = mock(IAppDataLoader::class.java)
-        Mockito.`when`(mock.getApps(packageManager))
+        whenever(mock.getApps(packageManager))
                 .thenReturn(observable)
 
         return mock
