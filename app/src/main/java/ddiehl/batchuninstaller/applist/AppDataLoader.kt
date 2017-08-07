@@ -30,7 +30,7 @@ class AppDataLoader : IAppDataLoader {
                     .map { name ->
                         val applicationInfo = packageManager.getApplicationInfo(name, 0)
                         val label = packageManager.getApplicationLabel(applicationInfo)
-                        AppViewModel(label, name, 0)
+                        AppViewModel(label ?: "", name, 0)
                     }
 
             Collections.shuffle(apps)
