@@ -3,7 +3,6 @@ package ddiehl.batchuninstaller.applist
 import android.content.pm.PackageManager
 import ddiehl.batchuninstaller.model.appinfo.IPackageManager
 import io.reactivex.Observable
-import java.util.*
 
 interface IAppDataLoader {
 
@@ -32,8 +31,9 @@ class AppDataLoader : IAppDataLoader {
                         val label = packageManager.getApplicationLabel(applicationInfo)
                         AppViewModel(label ?: "", name, 0)
                     }
+                    .sortedBy { viewModel -> viewModel.name }
+                    .toMutableList()
 
-            Collections.shuffle(apps)
             Observable.just(apps)
         }
     }
