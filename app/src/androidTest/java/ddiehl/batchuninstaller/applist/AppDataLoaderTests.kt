@@ -28,12 +28,7 @@ class AppDataLoaderTests {
         val observer = appDataLoader.getApps().test()
 
         observer.assertValueCount(1)
-        val list = observer.values().first()
-
-        list.forEachIndexed { index, _ ->
-            if (index >= list.size - 1) return@forEachIndexed
-
-            assertTrue(list[index].name < list[index+1].name)
-        }
+        val list: List<AppViewModel> = observer.values().first()
+        assertTrue(list.isSorted { it.name })
     }
 }

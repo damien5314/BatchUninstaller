@@ -23,6 +23,7 @@ class AppDataLoader(private val packageManager: IPackageManager) : IAppDataLoade
             val packageList = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES)
 
             val apps = packageList
+                    .asSequence()
                     .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
                     .filter { pkg -> packageManager.getLaunchIntentForPackage(pkg.packageName) != null }
                     .map { pkg -> pkg.packageName }
@@ -32,7 +33,7 @@ class AppDataLoader(private val packageManager: IPackageManager) : IAppDataLoade
                         AppViewModel(label ?: "", name, 0)
                     }
                     .sortedBy { viewModel -> viewModel.name }
-                    .toMutableList()
+                    .toList()
 
             Observable.just(apps)
         }
