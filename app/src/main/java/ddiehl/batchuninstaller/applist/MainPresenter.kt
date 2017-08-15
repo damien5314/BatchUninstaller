@@ -1,13 +1,11 @@
 package ddiehl.batchuninstaller.applist
 
-import ddiehl.batchuninstaller.model.appinfo.IPackageManager
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class MainPresenter(
-        private val packageManager: IPackageManager,
         private val appDataLoader: IAppDataLoader
 ) {
 
@@ -26,7 +24,7 @@ class MainPresenter(
 
     private fun loadApplicationData() {
         mainView?.let { mainView ->
-            appDataLoader.getApps(packageManager)
+            appDataLoader.getApps()
                     .subscribeOn(Schedulers.computation())
                     .observeOn(AndroidSchedulers.mainThread())
                     .doOnSubscribe {

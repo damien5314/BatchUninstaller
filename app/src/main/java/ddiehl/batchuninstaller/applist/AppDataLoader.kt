@@ -7,18 +7,18 @@ import io.reactivex.Observable
 interface IAppDataLoader {
 
     /**
-     * Returns an list of apps installed in the passed [IPackageManager]
+     * Returns a list of apps installed in the passed [IPackageManager].
      */
-    fun getApps(packageManager: IPackageManager): Observable<List<AppViewModel>>
+    fun getApps(): Observable<List<AppViewModel>>
 }
 
-class AppDataLoader : IAppDataLoader {
+class AppDataLoader(private val packageManager: IPackageManager) : IAppDataLoader {
 
     companion object {
         private const val ANDROID_PACKAGE_PREFIX = "com.android"
     }
 
-    override fun getApps(packageManager: IPackageManager): Observable<List<AppViewModel>> {
+    override fun getApps(): Observable<List<AppViewModel>> {
         return Observable.defer {
             val packageList = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES)
 

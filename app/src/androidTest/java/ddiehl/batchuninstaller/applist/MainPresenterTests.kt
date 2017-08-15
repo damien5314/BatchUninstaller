@@ -1,7 +1,6 @@
 package ddiehl.batchuninstaller.applist
 
 import android.support.test.runner.AndroidJUnit4
-import ddiehl.batchuninstaller.model.appinfo.IPackageManager
 import io.reactivex.Observable
 import org.junit.Before
 import org.junit.Test
@@ -13,7 +12,6 @@ import org.mockito.MockitoAnnotations
 @RunWith(AndroidJUnit4::class)
 class MainPresenterTests {
 
-    @Mock lateinit var packageManager: IPackageManager
     @Mock lateinit var mainView: MainView
 
     fun getFakeAppDataLoader(): IAppDataLoader {
@@ -57,7 +55,7 @@ class MainPresenterTests {
         val observable = Observable.just(apps)
 
         val mock = mock<IAppDataLoader>()
-        whenever(mock.getApps(packageManager)).thenReturn(observable)
+        whenever(mock.getApps()).thenReturn(observable)
 
         return mock
     }
@@ -70,10 +68,10 @@ class MainPresenterTests {
     @Test
     fun onViewAttached_appDataLoader_getAppsCalled() {
         val appDataLoader = getFakeAppDataLoader()
-        val mainPresenter = MainPresenter(packageManager, appDataLoader)
+        val mainPresenter = MainPresenter(appDataLoader)
 
         mainPresenter.onViewAttached(mainView)
 
-        verify(appDataLoader).getApps(packageManager)
+        verify(appDataLoader).getApps()
     }
 }

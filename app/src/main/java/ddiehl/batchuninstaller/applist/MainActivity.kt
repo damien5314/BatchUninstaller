@@ -58,8 +58,7 @@ class MainActivity : AppCompatActivity(), MainView {
         loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
 
         mainPresenter = MainPresenter(
-                packageManager = APackageManager(packageManager),
-                appDataLoader = AppDataLoader()
+                appDataLoader = AppDataLoader(APackageManager(packageManager))
         )
     }
 
