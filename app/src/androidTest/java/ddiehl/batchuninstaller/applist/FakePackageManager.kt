@@ -8,30 +8,25 @@ import ddiehl.batchuninstaller.model.appinfo.impl.APackageInfo
 
 class FakePackageManager : IPackageManager {
 
+    private enum class TestPackages(val packageName: String, val displayName: String) {
+        Duo("com.google.android.apps.tachyon", "Duo"),
+        PlayMoviesTv("com.google.android.videos", "Google Play Movies & TV"),
+        Messenger("com.google.android.apps.messaging", "Messenger"),
+        Calendar("com.google.android.calendar", "Calendar"),
+        Hangouts("com.google.android.talk", "Hangouts"),
+        HtmlViewer("com.android.htmlviewer", "HTML Viewer"),
+        CarrierConfig("com.android.carrierconfig", "Carrier Config"),
+    }
+
     override fun getInstalledPackages(type: Int): List<IPackageInfo> {
-        return listOf(
-                APackageInfo("com.google.android.apps.tachyon"), // Duo
-                APackageInfo("com.google.android.videos"), // Google Play Movies & TV
-                APackageInfo("com.google.android.apps.messaging"), // Messenger
-                APackageInfo("com.google.android.calendar"), // Calendar
-                APackageInfo("com.google.android.talk"), // Hangouts
-                APackageInfo("com.android.htmlviewer"), // HTML Viewer
-                APackageInfo("com.android.carrierconfig") // Carrier Config
-        )
+        return TestPackages.values()
+                .map { testPackages -> APackageInfo(testPackages.packageName) }
     }
 
     override fun getLaunchIntentForPackage(packageName: String): IIntent? {
-
-        when (packageName) {
-            "com.google.android.apps.tachyon",
-            "com.google.android.videos",
-            "com.google.android.apps.messaging",
-            "com.google.android.calendar",
-            "com.google.android.talk",
-            "com.android.htmlviewer",
-            "com.android.carrierconfig" -> return object : IIntent { }
-            else -> return null
-        }
+        if (TestPackages.values().find { pkg -> pkg.packageName == packageName } != null) {
+            return object : IIntent { }
+        } else return null
     }
 
     override fun getApplicationInfo(name: String, flags: Int): IApplicationInfo
@@ -42,16 +37,10 @@ class FakePackageManager : IPackageManager {
             throw IllegalArgumentException()
         }
 
-        when (applicationInfo.packageName) {
-            "com.google.android.apps.tachyon" -> return "Duo"
-            "com.google.android.videos" -> return "Google Play Movies & TV"
-            "com.google.android.apps.messaging" -> return "Messenger"
-            "com.google.android.calendar" -> return "Calendar"
-            "com.google.android.talk" -> return "Hangouts"
-            "com.android.htmlviewer" -> return "HTML Viewer"
-            "com.android.carrierconfig" -> return "Carrier Config"
-            else -> return null
-        }
+        val pkg = TestPackages.values()
+                .find { info -> info.packageName == applicationInfo.packageName }
+
+        return pkg?.displayName
     }
 
     private class FakeApplicationInfo(val packageName: String) : IApplicationInfo
