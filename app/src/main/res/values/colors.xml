@@ -10,7 +10,7 @@
     <color name="divider">#b6b6b6</color>
 
     <color name="color_action_mode_bg">@color/primary</color>
-    <color name="color_action_mode_text">@android:color/white</color>
+    <color name="color_action_mode_text">@color/white</color>
 
     <color name="transparent">#00000000</color>
     <color name="white">#ffffff</color>
@@ -20,5 +20,7 @@
     <color name="red">#ee4444</color>
     <color name="blue">#4e76c9</color>
     <color name="gold">#c29f37</color>
+
+    <color name="ic_launcher_background">#ffffff</color>
 
 </resources>
