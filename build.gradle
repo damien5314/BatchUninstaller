@@ -1,12 +1,12 @@
 buildscript {
     ext {
-        ANDROID_GRADLE_PLUGIN = '3.0.0-beta2'
+        ANDROID_GRADLE_PLUGIN = '3.0.0-beta3'
         BUILD_TOOLS_VERSION = '26.0.1'
         COMPILE_SDK_VERSION = 26
         TARGET_SDK_VERSION = 26
 
         SUPPORT_LIBRARY_VERSION = '26.0.0'
-        KOTLIN_VERSION = '1.1.3-2'
+        KOTLIN_VERSION = '1.1.4-2'
         ANKO_VERSION = "0.8.2"
 
         RXJAVA2_VERSION = '2.0.8'
