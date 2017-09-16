@@ -10,7 +10,7 @@ class APackageManager(private val packageManager: PackageManager) : IPackageMana
 
     override fun getInstalledPackages(type: Int): List<IPackageInfo> {
         return packageManager.getInstalledPackages(type)
-                .map { APackageInfo(it) }
+                .map { APackageInfo(it.packageName) }
     }
 
     override fun getLaunchIntentForPackage(packageName: String): IIntent? {
@@ -24,7 +24,7 @@ class APackageManager(private val packageManager: PackageManager) : IPackageMana
         }
     }
 
-    override fun getApplicationLabel(applicationInfo: IApplicationInfo): String {
+    override fun getApplicationLabel(applicationInfo: IApplicationInfo): String? {
         if (applicationInfo !is AApplicationInfo) {
             throw IllegalArgumentException("$applicationInfo is of the wrong type")
         }

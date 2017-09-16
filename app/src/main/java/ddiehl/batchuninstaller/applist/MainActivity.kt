@@ -3,6 +3,7 @@ package ddiehl.batchuninstaller.applist
 import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.support.design.widget.Snackbar
 import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
@@ -13,6 +14,7 @@ import android.widget.Toast
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.appinfo.impl.APackageManager
+import ddiehl.batchuninstaller.uninstall.UninstallQueue
 import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import ddiehl.batchuninstaller.utils.tintAllIcons
@@ -36,6 +38,7 @@ class MainActivity : AppCompatActivity(), MainView {
     private val multiSelector = MultiSelector()
 
     override val appList = mutableListOf<AppViewModel>()
+    private val uninstallQueue = UninstallQueue()
     private var selectedPackages: Array<String>? = null
     private var appUninstallRequested: AppViewModel? = null
 
@@ -57,7 +60,8 @@ class MainActivity : AppCompatActivity(), MainView {
         loadingOverlay.setCancelable(false)
         loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
 
-        mainPresenter = MainPresenter(packageManager = APackageManager(packageManager))
+        val appDataLoader = AppDataLoader(APackageManager(packageManager))
+        mainPresenter = MainPresenter(appDataLoader)
     }
 
     override fun onStart() {
@@ -81,31 +85,19 @@ class MainActivity : AppCompatActivity(), MainView {
         outState.putStringArray(STATE_SELECTED_PACKAGES, selectedPackages)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode != RC_UNINSTALL_APP) return
-        if (data == null) return
-
-        val successful = data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
-        if (successful) {
-            //TODO
-        }
-    }
-
     //region MainView
 
     override fun showApps(apps: List<AppViewModel>) {
         appList.clear()
         appList.addAll(apps)
 
-        selectedPackages?.let { selectedPackages ->
+        selectedPackages?.let { packages ->
             appList.forEachIndexed { index, appViewModel ->
-                if (selectedPackages.contains(appViewModel.packageName)) {
+                if (packages.contains(appViewModel.packageName)) {
                     multiSelector.setSelected(index, 0, true)
                 }
             }
-            this.selectedPackages = null
+            selectedPackages = null
         }
 
         adapter.notifyDataSetChanged()
@@ -155,12 +147,43 @@ class MainActivity : AppCompatActivity(), MainView {
             return
         }
 
-        val appToUninstall = appList[selectedPositions.first()]
-        val uninstallIntent = getUninstallIntent(appToUninstall.packageName, true)
+        val appsToUninstall = selectedPositions.map { appList[it] }
+        uninstallQueue.addAll(appsToUninstall)
+        promptNextUninstall()
+    }
 
-        packageManager.resolveActivity(uninstallIntent, 0).let {
+    private fun promptNextUninstall() {
+        uninstallQueue.next()?.let { appToUninstall ->
+            val uninstallIntent = getUninstallIntent(appToUninstall.packageName, true)
+
+            packageManager.resolveActivity(uninstallIntent, 0)
+                    ?: throw NullPointerException("Unable to uninstall ${appToUninstall.packageName}")
+
             appUninstallRequested = appToUninstall
             startActivityForResult(uninstallIntent, RC_UNINSTALL_APP)
         }
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode != RC_UNINSTALL_APP || data == null) {
+            return
+        }
+
+        if (resultSuccessful(data)) {
+            val appViewModel = appUninstallRequested
+            val indexRemoved = appList.indexOf(appViewModel)
+            multiSelector.setSelected(indexRemoved, 0, false)
+            appList.removeAt(indexRemoved)
+            adapter.notifyItemRemoved(indexRemoved)
+        }
+
+        Handler().post {
+            promptNextUninstall()
+        }
+    }
+
+    private fun resultSuccessful(data: Intent) =
+            data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
 }
