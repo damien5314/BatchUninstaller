@@ -170,7 +170,7 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode != RC_UNINSTALL_APP || data == null) {
+        if (requestCode != RC_UNINSTALL_APP) {
             return
         }
 
@@ -182,6 +182,7 @@ class MainActivity : AppCompatActivity(), MainView {
             val indexRemoved = appList.indexOf(removedApp)
             multiSelector.setSelected(indexRemoved, 0, false)
             appList.removeAt(indexRemoved)
+            multiSelector.itemRemoved(indexRemoved)
             adapter.notifyItemRemoved(indexRemoved)
         }
 
@@ -190,6 +191,15 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
-    private fun resultSuccessful(data: Intent) =
-            data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
+    private fun MultiSelector.itemRemoved(position: Int) {
+        val positionsToDecrement = selectedPositions
+                .filter { it >= position }
+        positionsToDecrement.forEach {
+            setSelected(it, 0, false)
+            setSelected(it - 1, 0, true)
+        }
+    }
+
+    private fun resultSuccessful(data: Intent?) =
+            data != null && data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
 }
