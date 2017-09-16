@@ -172,8 +172,11 @@ class MainActivity : AppCompatActivity(), MainView {
         }
 
         if (resultSuccessful(data)) {
-            val appViewModel = appUninstallRequested
-            val indexRemoved = appList.indexOf(appViewModel)
+            val appViewModel = appUninstallRequested ?: throw NullPointerException("No app was pending uninstall")
+            val removedApp = appList.find { viewModel ->
+                viewModel.packageName == appViewModel.packageName
+            }
+            val indexRemoved = appList.indexOf(removedApp)
             multiSelector.setSelected(indexRemoved, 0, false)
             appList.removeAt(indexRemoved)
             adapter.notifyItemRemoved(indexRemoved)
