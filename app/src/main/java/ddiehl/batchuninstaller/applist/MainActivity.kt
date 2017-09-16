@@ -16,6 +16,7 @@ import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.appinfo.impl.APackageManager
 import ddiehl.batchuninstaller.uninstall.UninstallQueue
 import ddiehl.batchuninstaller.utils.getUninstallIntent
+import ddiehl.batchuninstaller.utils.itemRemoved
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import ddiehl.batchuninstaller.utils.tintAllIcons
 import kotlinx.android.synthetic.main.main_activity.*
@@ -188,15 +189,6 @@ class MainActivity : AppCompatActivity(), MainView {
 
         Handler().post {
             promptNextUninstall()
-        }
-    }
-
-    private fun MultiSelector.itemRemoved(position: Int) {
-        val positionsToDecrement = selectedPositions
-                .filter { it >= position }
-        positionsToDecrement.forEach {
-            setSelected(it, 0, false)
-            setSelected(it - 1, 0, true)
         }
     }
 
