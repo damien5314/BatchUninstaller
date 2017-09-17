@@ -14,12 +14,12 @@ import android.widget.Toast
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.appinfo.impl.APackageManager
-import ddiehl.batchuninstaller.uninstall.UninstallQueue
 import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.itemRemoved
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import ddiehl.batchuninstaller.utils.tintAllIcons
 import kotlinx.android.synthetic.main.main_activity.*
+import java.util.*
 
 class MainActivity : AppCompatActivity(), MainView {
 
@@ -40,7 +40,7 @@ class MainActivity : AppCompatActivity(), MainView {
     private val multiSelector = MultiSelector()
 
     override val appList = mutableListOf<AppViewModel>()
-    private val uninstallQueue = UninstallQueue()
+    private val uninstallQueue: Queue<AppViewModel> = LinkedList()
     private var selectedPackages: Array<String>? = null
     private var appUninstallRequested: AppViewModel? = null
 
@@ -157,13 +157,14 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     private fun promptNextUninstall() {
-        uninstallQueue.next()?.let { appToUninstall ->
-            val uninstallIntent = getUninstallIntent(appToUninstall.packageName, true)
+        val nextApp = uninstallQueue.poll()
+        nextApp?.let {
+            val uninstallIntent = getUninstallIntent(it.packageName, true)
 
             packageManager.resolveActivity(uninstallIntent, 0)
-                    ?: throw NullPointerException("Unable to uninstall ${appToUninstall.packageName}")
+                    ?: throw NullPointerException("Unable to uninstall ${it.packageName}")
 
-            appUninstallRequested = appToUninstall
+            appUninstallRequested = it
             startActivityForResult(uninstallIntent, RC_UNINSTALL_APP)
         }
     }
