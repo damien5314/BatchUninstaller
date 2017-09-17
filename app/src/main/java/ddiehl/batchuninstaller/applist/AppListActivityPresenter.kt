@@ -5,21 +5,21 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
-class MainPresenter(
-        private val appDataLoader: IAppDataLoader
+class AppListActivityPresenter(
+        private val appDataLoader: AppDataLoader
 ) {
 
-    private var mainView: MainView? = null
+    private var appListView: AppListView? = null
     private val subscriptions = CompositeDisposable()
 
-    fun onViewAttached(view: MainView) {
-        mainView = view
+    fun onViewAttached(view: AppListView) {
+        appListView = view
         loadApplicationData()
     }
 
-    fun onViewDetached(view: MainView) {
+    fun onViewDetached(view: AppListView) {
         subscriptions.clear()
-        mainView = null
+        appListView = null
     }
 
     private fun loadApplicationData() {
@@ -28,18 +28,18 @@ class MainPresenter(
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnSubscribe {
                     subscriptions.add(it)
-                    mainView?.showSpinner()
+                    appListView?.showSpinner()
                 }
-                .doFinally { mainView?.dismissSpinner() }
+                .doFinally { appListView?.dismissSpinner() }
                 .subscribe(this::onAppsLoaded, this::onAppsLoadError)
     }
 
     private fun onAppsLoaded(apps: List<AppViewModel>) {
-        mainView?.showApps(apps)
+        appListView?.showApps(apps)
     }
 
     private fun onAppsLoadError(error: Throwable) {
         Timber.e(error, "Error processing packages")
-        mainView?.showToast(error)
+        appListView?.showToast(error)
     }
 }

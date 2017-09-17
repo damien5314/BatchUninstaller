@@ -18,13 +18,13 @@ import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.itemRemoved
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import ddiehl.batchuninstaller.utils.tintAllIcons
-import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.app_list_activity.*
 import java.util.*
 
-class MainActivity : AppCompatActivity(), MainView {
+class AppListActivity : AppCompatActivity(), AppListView {
 
     companion object {
-        private val LAYOUT_RES_ID = R.layout.main_activity
+        private val LAYOUT_RES_ID = R.layout.app_list_activity
         private val RC_UNINSTALL_APP = 10
         private val STATE_SELECTED_PACKAGES = "selectedPackages"
         private val STATE_PENDING_UNINSTALL = "pendingUninstall"
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), MainView {
         private val EXTRA_UNINSTALL_RESULT_SUCCESS = 1
     }
 
-    private lateinit var mainPresenter: MainPresenter
+    private lateinit var appListActivityPresenter: AppListActivityPresenter
     private lateinit var adapter: AppAdapter
     private lateinit var loadingOverlay: ProgressDialog
     private val multiSelector = MultiSelector()
@@ -63,17 +63,17 @@ class MainActivity : AppCompatActivity(), MainView {
         loadingOverlay.setCancelable(false)
         loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
 
-        val appDataLoader = AppDataLoader(APackageManager(packageManager))
-        mainPresenter = MainPresenter(appDataLoader)
+        val appDataLoader = AppDataLoader.Impl(APackageManager(packageManager))
+        appListActivityPresenter = AppListActivityPresenter(appDataLoader)
     }
 
     override fun onStart() {
         super.onStart()
-        mainPresenter.onViewAttached(this)
+        appListActivityPresenter.onViewAttached(this)
     }
 
     override fun onStop() {
-        mainPresenter.onViewDetached(this)
+        appListActivityPresenter.onViewDetached(this)
         super.onStop()
     }
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), MainView {
         outState.putParcelable(STATE_PENDING_UNINSTALL, appUninstallRequested)
     }
 
-    //region MainView
+    //region AppListView
 
     override fun showApps(apps: List<AppViewModel>) {
         appList.clear()

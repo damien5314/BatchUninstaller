@@ -7,9 +7,7 @@ import org.junit.Test
 
 class AppDataLoaderTests {
 
-    fun getAppDataLoader(packageManager: IPackageManager): AppDataLoader {
-        return AppDataLoader(packageManager)
-    }
+    private fun getAppDataLoader(packageManager: IPackageManager) = AppDataLoader.Impl(packageManager)
 
     @Test fun getApps_verifyCorrectCountIsReturned() {
         val appDataLoader = getAppDataLoader(FakePackageManager())
