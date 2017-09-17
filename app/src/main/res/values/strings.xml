@@ -1,5 +1,6 @@
 <resources>
 
+    <string name="app_label">Uninstaller</string>
     <string name="app_name">Batch Uninstaller</string>
     <string name="action_uninstall">Uninstall</string>
     <plurals name="items_selected">
