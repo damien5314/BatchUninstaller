@@ -10,11 +10,11 @@ import org.mockito.Mockito.verify
 import org.mockito.MockitoAnnotations
 
 @RunWith(AndroidJUnit4::class)
-class MainPresenterTests {
+class AppListActivityPresenterTests {
 
-    @Mock lateinit var mainView: MainView
+    @Mock lateinit var appListView: AppListView
 
-    fun getFakeAppDataLoader(): IAppDataLoader {
+    fun getFakeAppDataLoader(): AppDataLoader {
         val apps = listOf(
                 AppViewModel(
                         name = "Duo",
@@ -54,7 +54,7 @@ class MainPresenterTests {
         )
         val observable = Observable.just(apps)
 
-        val mock = mock<IAppDataLoader>()
+        val mock = mock<AppDataLoader>()
         whenever(mock.getApps()).thenReturn(observable)
 
         return mock
@@ -68,9 +68,9 @@ class MainPresenterTests {
     @Test
     fun onViewAttached_appDataLoader_getAppsCalled() {
         val appDataLoader = getFakeAppDataLoader()
-        val mainPresenter = MainPresenter(appDataLoader)
+        val mainPresenter = AppListActivityPresenter(appDataLoader)
 
-        mainPresenter.onViewAttached(mainView)
+        mainPresenter.onViewAttached(appListView)
 
         verify(appDataLoader).getApps()
     }

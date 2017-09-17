@@ -2,7 +2,7 @@ package ddiehl.batchuninstaller.applist;
 
 import android.content.pm.PackageManager
 
-interface MainView {
+interface AppListView {
 
     val appList: List<AppViewModel>
 

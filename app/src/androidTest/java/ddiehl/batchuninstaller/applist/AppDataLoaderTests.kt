@@ -1,18 +1,15 @@
 package ddiehl.batchuninstaller.applist
 
-import ddiehl.batchuninstaller.model.appinfo.IPackageManager
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AppDataLoaderTests {
 
-    fun getAppDataLoader(packageManager: IPackageManager): AppDataLoader {
-        return AppDataLoader(packageManager)
-    }
+    private fun getAppDataLoader() = AppDataLoader.Impl(FakePackageManager())
 
     @Test fun getApps_verifyCorrectCountIsReturned() {
-        val appDataLoader = getAppDataLoader(FakePackageManager())
+        val appDataLoader = getAppDataLoader()
 
         val observer = appDataLoader.getApps().test()
 
@@ -23,7 +20,7 @@ class AppDataLoaderTests {
     }
 
     @Test fun getApps_verifySortedByName() {
-        val appDataLoader = getAppDataLoader(FakePackageManager())
+        val appDataLoader = getAppDataLoader()
 
         val observer = appDataLoader.getApps().test()
 

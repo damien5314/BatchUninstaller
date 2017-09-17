@@ -14,17 +14,17 @@ import android.widget.Toast
 import com.bignerdranch.android.multiselector.MultiSelector
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.appinfo.impl.APackageManager
-import ddiehl.batchuninstaller.uninstall.UninstallQueue
 import ddiehl.batchuninstaller.utils.getUninstallIntent
 import ddiehl.batchuninstaller.utils.itemRemoved
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import ddiehl.batchuninstaller.utils.tintAllIcons
-import kotlinx.android.synthetic.main.main_activity.*
+import kotlinx.android.synthetic.main.app_list_activity.*
+import java.util.*
 
-class MainActivity : AppCompatActivity(), MainView {
+class AppListActivity : AppCompatActivity(), AppListView {
 
     companion object {
-        private val LAYOUT_RES_ID = R.layout.main_activity
+        private val LAYOUT_RES_ID = R.layout.app_list_activity
         private val RC_UNINSTALL_APP = 10
         private val STATE_SELECTED_PACKAGES = "selectedPackages"
         private val STATE_PENDING_UNINSTALL = "pendingUninstall"
@@ -34,13 +34,13 @@ class MainActivity : AppCompatActivity(), MainView {
         private val EXTRA_UNINSTALL_RESULT_SUCCESS = 1
     }
 
-    private lateinit var mainPresenter: MainPresenter
+    private lateinit var appListActivityPresenter: AppListActivityPresenter
     private lateinit var adapter: AppAdapter
     private lateinit var loadingOverlay: ProgressDialog
     private val multiSelector = MultiSelector()
 
     override val appList = mutableListOf<AppViewModel>()
-    private val uninstallQueue = UninstallQueue()
+    private val uninstallQueue: Queue<AppViewModel> = LinkedList()
     private var selectedPackages: Array<String>? = null
     private var appUninstallRequested: AppViewModel? = null
 
@@ -63,17 +63,17 @@ class MainActivity : AppCompatActivity(), MainView {
         loadingOverlay.setCancelable(false)
         loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
 
-        val appDataLoader = AppDataLoader(APackageManager(packageManager))
-        mainPresenter = MainPresenter(appDataLoader)
+        val appDataLoader = AppDataLoader.Impl(APackageManager(packageManager))
+        appListActivityPresenter = AppListActivityPresenter(appDataLoader)
     }
 
     override fun onStart() {
         super.onStart()
-        mainPresenter.onViewAttached(this)
+        appListActivityPresenter.onViewAttached(this)
     }
 
     override fun onStop() {
-        mainPresenter.onViewDetached(this)
+        appListActivityPresenter.onViewDetached(this)
         super.onStop()
     }
 
@@ -89,7 +89,7 @@ class MainActivity : AppCompatActivity(), MainView {
         outState.putParcelable(STATE_PENDING_UNINSTALL, appUninstallRequested)
     }
 
-    //region MainView
+    //region AppListView
 
     override fun showApps(apps: List<AppViewModel>) {
         appList.clear()
@@ -157,13 +157,14 @@ class MainActivity : AppCompatActivity(), MainView {
     }
 
     private fun promptNextUninstall() {
-        uninstallQueue.next()?.let { appToUninstall ->
-            val uninstallIntent = getUninstallIntent(appToUninstall.packageName, true)
+        val nextApp = uninstallQueue.poll()
+        nextApp?.let {
+            val uninstallIntent = getUninstallIntent(it.packageName, true)
 
             packageManager.resolveActivity(uninstallIntent, 0)
-                    ?: throw NullPointerException("Unable to uninstall ${appToUninstall.packageName}")
+                    ?: throw NullPointerException("Unable to uninstall ${it.packageName}")
 
-            appUninstallRequested = appToUninstall
+            appUninstallRequested = it
             startActivityForResult(uninstallIntent, RC_UNINSTALL_APP)
         }
     }
