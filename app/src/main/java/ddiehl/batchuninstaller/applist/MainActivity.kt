@@ -16,6 +16,7 @@ import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.model.appinfo.impl.APackageManager
 import ddiehl.batchuninstaller.uninstall.UninstallQueue
 import ddiehl.batchuninstaller.utils.getUninstallIntent
+import ddiehl.batchuninstaller.utils.itemRemoved
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import ddiehl.batchuninstaller.utils.tintAllIcons
 import kotlinx.android.synthetic.main.main_activity.*
@@ -26,6 +27,7 @@ class MainActivity : AppCompatActivity(), MainView {
         private val LAYOUT_RES_ID = R.layout.main_activity
         private val RC_UNINSTALL_APP = 10
         private val STATE_SELECTED_PACKAGES = "selectedPackages"
+        private val STATE_PENDING_UNINSTALL = "pendingUninstall"
 
         // Values returned from Android uninstall Activity, cannot modify
         private val EXTRA_INSTALL_RESULT = "android.intent.extra.INSTALL_RESULT"
@@ -42,14 +44,15 @@ class MainActivity : AppCompatActivity(), MainView {
     private var selectedPackages: Array<String>? = null
     private var appUninstallRequested: AppViewModel? = null
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    override fun onCreate(state: Bundle?) {
+        super.onCreate(state)
         setContentView(LAYOUT_RES_ID)
         setBackgroundColor(R.color.gray)
         setSupportActionBar(toolbar)
 
-        savedInstanceState?.let {
-            selectedPackages = savedInstanceState.getStringArray(STATE_SELECTED_PACKAGES)
+        state?.let {
+            selectedPackages = state.getStringArray(STATE_SELECTED_PACKAGES)
+            appUninstallRequested = state.getParcelable(STATE_PENDING_UNINSTALL)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -83,6 +86,7 @@ class MainActivity : AppCompatActivity(), MainView {
                         .toTypedArray()
 
         outState.putStringArray(STATE_SELECTED_PACKAGES, selectedPackages)
+        outState.putParcelable(STATE_PENDING_UNINSTALL, appUninstallRequested)
     }
 
     //region MainView
@@ -167,15 +171,19 @@ class MainActivity : AppCompatActivity(), MainView {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
-        if (requestCode != RC_UNINSTALL_APP || data == null) {
+        if (requestCode != RC_UNINSTALL_APP) {
             return
         }
 
         if (resultSuccessful(data)) {
-            val appViewModel = appUninstallRequested
-            val indexRemoved = appList.indexOf(appViewModel)
+            val appViewModel = appUninstallRequested ?: throw NullPointerException("No app was pending uninstall")
+            val removedApp = appList.find { viewModel ->
+                viewModel.packageName == appViewModel.packageName
+            }
+            val indexRemoved = appList.indexOf(removedApp)
             multiSelector.setSelected(indexRemoved, 0, false)
             appList.removeAt(indexRemoved)
+            multiSelector.itemRemoved(indexRemoved)
             adapter.notifyItemRemoved(indexRemoved)
         }
 
@@ -184,6 +192,6 @@ class MainActivity : AppCompatActivity(), MainView {
         }
     }
 
-    private fun resultSuccessful(data: Intent) =
-            data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
+    private fun resultSuccessful(data: Intent?) =
+            data != null && data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
 }
