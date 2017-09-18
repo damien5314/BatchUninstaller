@@ -21,6 +21,24 @@ android {
 
         testInstrumentationRunner 'android.support.test.runner.AndroidJUnitRunner'
     }
+
+    signingConfigs {
+        debug {
+            storeFile file('keys/debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release.initWith(debug)
+    }
+
+    def keystoreProperties = getProperties("quizlet-android-app/keys/release/keystore.properties")
+    if (keystoreProperties != null) {
+        signingConfigs.release.storeFile = file(keystoreProperties['storeFile'])
+        signingConfigs.release.storePassword = keystoreProperties['storePassword']
+        signingConfigs.release.keyAlias = keystoreProperties['keyAlias']
+        signingConfigs.release.keyPassword = keystoreProperties['keyPassword']
+    }
 }
 
 dependencies {
@@ -60,4 +78,13 @@ dependencies {
 //    // The following Espresso dependency can be either "compile"
 //    // or "androidTestCompile", depending on your app's implementation
 //    androidTestCompile 'com.android.support.test.espresso:espresso-idling-resource:3.0.0'
+}
+
+private Properties getProperties(def filePath) {
+    def propertiesFile = rootProject.file(filePath)
+    if (!propertiesFile.exists()) return null
+
+    def properties = new Properties()
+    properties.load(new FileInputStream(propertiesFile))
+    return properties
 }
