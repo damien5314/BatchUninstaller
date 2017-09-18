@@ -1,9 +1,11 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'io.fabric'
 
 repositories {
     google()
+    maven { url 'https://maven.fabric.io/public' }
 }
 
 android {
@@ -35,6 +37,11 @@ dependencies {
     compile "io.reactivex.rxjava2:rxjava:$RXJAVA2_VERSION"
     compile "io.reactivex.rxjava2:rxandroid:$RXJAVA2_ANDROID_VERSION"
     compile "com.bignerdranch.android:recyclerview-multiselect:$RECYCLERVIEW_MULTISELECT_VERSION"
+
+    // Crashlytics
+    compile("com.crashlytics.sdk.android:crashlytics:2.6.8@aar") {
+        transitive = true
+    }
 
     // Test dependencies
     testCompile "junit:junit:$JUNIT_VERSION"

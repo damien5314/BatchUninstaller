@@ -1,6 +1,7 @@
 buildscript {
     ext {
         ANDROID_GRADLE_PLUGIN = '3.0.0-beta6'
+        FABRIC_PLUGIN_VERSION = '1.24.1'
         BUILD_TOOLS_VERSION = '26.0.1'
         COMPILE_SDK_VERSION = 26
         TARGET_SDK_VERSION = 26
@@ -22,11 +23,13 @@ buildscript {
     repositories {
         jcenter()
         google()
+        maven { url 'https://maven.fabric.io/public' }
     }
 
     dependencies {
         classpath "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
+        classpath "io.fabric.tools:gradle:$FABRIC_PLUGIN_VERSION"
     }
 }
 
