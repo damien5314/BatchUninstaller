@@ -42,6 +42,9 @@ class FakePackageManager : IPackageManager {
 
         return pkg?.displayName
     }
+    override fun getInstallationTime(packageName: String): Long {
+        return System.currentTimeMillis()
+    }
 
     private class FakeApplicationInfo(val packageName: String) : IApplicationInfo
 }

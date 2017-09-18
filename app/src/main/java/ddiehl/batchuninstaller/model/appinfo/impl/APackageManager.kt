@@ -31,4 +31,9 @@ class APackageManager(private val packageManager: PackageManager) : IPackageMana
 
         return packageManager.getApplicationLabel(applicationInfo.delegate).toString()
     }
+
+    override fun getInstallationTime(packageName: String): Long {
+        return packageManager.getPackageInfo(packageName, 0)
+                .firstInstallTime
+    }
 }
