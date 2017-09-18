@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
     <string name="app_label">Uninstaller</string>
     <string name="app_name">Batch Uninstaller</string>
@@ -9,5 +9,6 @@
     </plurals>
     <string name="error_getting_app_info">Error retrieving application info</string>
     <string name="error_no_apps_selected">Error: no apps selected</string>
+    <string name="installation_date">Installed <xliff:g name="long date" example="July 4, 2010">%s</xliff:g></string>
 
 </resources>

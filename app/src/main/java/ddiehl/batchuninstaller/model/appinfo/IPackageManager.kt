@@ -9,4 +9,6 @@ interface IPackageManager {
     fun getApplicationInfo(name: String, flags: Int): IApplicationInfo
 
     fun getApplicationLabel(applicationInfo: IApplicationInfo): String?
+
+    fun getInstallationTime(packageName: String): Long
 }
