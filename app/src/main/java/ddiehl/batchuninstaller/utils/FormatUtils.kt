@@ -8,7 +8,7 @@ fun formatInstallationDate(timestamp: Long): String {
     return DateUtils.getRelativeTimeSpanString(
             timestamp,
             System.currentTimeMillis(),
-            DateUtils.MINUTE_IN_MILLIS,
+            DateUtils.HOUR_IN_MILLIS,
             0
     ).toString()
 }
