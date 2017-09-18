@@ -8,6 +8,5 @@
 projectFilesBackup/
 
 # Internal keys
-# app/src/main/res/values/com_crashlytics_export_strings.xml
 app/fabric.properties
 app/keys/release
