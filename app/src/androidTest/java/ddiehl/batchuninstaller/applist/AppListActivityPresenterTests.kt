@@ -19,36 +19,43 @@ class AppListActivityPresenterTests {
                 AppViewModel(
                         name = "Duo",
                         packageName = "com.google.android.apps.tachyon",
+                        installationDate = System.currentTimeMillis(),
                         size = 0
                 ),
                 AppViewModel(
                         name = "Google Play Movies & TV",
                         packageName = "com.google.android.videos",
+                        installationDate = System.currentTimeMillis(),
                         size = 0
                 ),
                 AppViewModel(
                         name = "Messenger",
                         packageName = "com.google.android.apps.messaging",
+                        installationDate = System.currentTimeMillis(),
                         size = 0
                 ),
                 AppViewModel(
                         name = "Calendar",
                         packageName = "com.google.android.calendar",
+                        installationDate = System.currentTimeMillis(),
                         size = 0
                 ),
                 AppViewModel(
                         name = "Hangouts",
                         packageName = "com.google.android.talk",
+                        installationDate = System.currentTimeMillis(),
                         size = 0
                 ),
                 AppViewModel(
                         name = "HTML Viewer",
                         packageName = "com.android.htmlviewer",
+                        installationDate = System.currentTimeMillis(),
                         size = 0
                 ),
                 AppViewModel(
                         name = "Carrier Config",
                         packageName = "com.android.carrierconfig",
+                        installationDate = System.currentTimeMillis(),
                         size = 0
                 )
         )
