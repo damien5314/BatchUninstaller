@@ -6,3 +6,7 @@
 /build
 /captures
 projectFilesBackup/
+
+# Internal keys
+app/fabric.properties
+app/keys/release
