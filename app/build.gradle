@@ -33,12 +33,25 @@ android {
         release.initWith(debug)
     }
 
-    def keystoreProperties = getProperties("quizlet-android-app/keys/release/keystore.properties")
-    if (keystoreProperties != null) {
-        signingConfigs.release.storeFile = file(keystoreProperties['storeFile'])
-        signingConfigs.release.storePassword = keystoreProperties['storePassword']
-        signingConfigs.release.keyAlias = keystoreProperties['keyAlias']
-        signingConfigs.release.keyPassword = keystoreProperties['keyPassword']
+    def keystoreProperties = getProperties("app/keys/release/keystore.properties")
+    signingConfigs.release.storeFile = file(keystoreProperties['storeFile'])
+    signingConfigs.release.storePassword = keystoreProperties['storePassword']
+    signingConfigs.release.keyAlias = keystoreProperties['keyAlias']
+    signingConfigs.release.keyPassword = keystoreProperties['keyPassword']
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix ".X"
+            debuggable true
+        }
+        release {
+            signingConfig signingConfigs.release
+            debuggable false
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'),
+                    'src/main/proguard-project.txt'
+        }
     }
 }
 
