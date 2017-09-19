@@ -8,6 +8,6 @@
         <item quantity="other">%d apps selected</item>
     </plurals>
     <string name="error_getting_app_info">Error retrieving application info</string>
-    <string name="error_no_apps_selected">Error: no apps selected</string>
+    <string name="error_no_apps_selected">No apps selected</string>
 
 </resources>
