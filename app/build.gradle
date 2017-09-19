@@ -6,6 +6,7 @@ apply plugin: 'io.fabric'
 repositories {
     google()
     maven { url 'https://maven.fabric.io/public' }
+    maven { url "https://jitpack.io" }
 }
 
 android {
@@ -60,6 +61,8 @@ dependencies {
     compile("com.crashlytics.sdk.android:crashlytics:$CRASHLYTICS_VERSION@aar") {
         transitive = true
     }
+
+    compile 'com.github.damien5314:TimeSinceTextView:1.3'
 
     // Test dependencies
     testCompile "junit:junit:$JUNIT_VERSION"

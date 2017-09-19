@@ -6,9 +6,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bignerdranch.android.multiselector.MultiSelector
 import com.bignerdranch.android.multiselector.MultiSelectorBindingHolder
+import com.ddiehl.timesincetextview.TimeSinceTextView
 import ddiehl.batchuninstaller.R
 import ddiehl.batchuninstaller.utils.formatFileSize
-import ddiehl.batchuninstaller.utils.formatInstallationDate
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -23,7 +23,7 @@ class AppViewHolder(
     }
 
     val name = view.findViewById<TextView>(R.id.app_name)
-    val installationDate = view.findViewById<TextView>(R.id.installation_date)
+    val installationDate = view.findViewById<TimeSinceTextView>(R.id.installation_date)
     val size = view.findViewById<TextView>(R.id.app_size)
     val icon = view.findViewById<ImageView>(R.id.app_icon)
     val checkbox = view.findViewById<CheckBox>(R.id.selection_check_box)
@@ -39,7 +39,7 @@ class AppViewHolder(
         this.app = app
 
         name.text = app.name
-        installationDate.text = formatInstallationDate(app.installationDate)
+        installationDate.date = app.installationDate / 1000
         size.text = formatFileSize(app.size, itemView.context)
         checkbox.isChecked = isSelected
 
