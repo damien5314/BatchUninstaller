@@ -49,6 +49,7 @@ class AppListActivity : AppCompatActivity(), AppListView {
         setContentView(LAYOUT_RES_ID)
         setBackgroundColor(R.color.gray)
         setSupportActionBar(toolbar)
+        setTitle(R.string.app_name)
 
         state?.let {
             selectedPackages = state.getStringArray(STATE_SELECTED_PACKAGES)
