@@ -31,19 +31,31 @@ android {
             keyPassword 'android'
         }
         release.initWith(debug)
+        upload.initWith(debug)
     }
 
-    def keystoreProperties = getProperties("app/keys/release/keystore.properties")
-    signingConfigs.release.storeFile = file(keystoreProperties['storeFile'])
-    signingConfigs.release.storePassword = keystoreProperties['storePassword']
-    signingConfigs.release.keyAlias = keystoreProperties['keyAlias']
-    signingConfigs.release.keyPassword = keystoreProperties['keyPassword']
+    def releaseKeystore = getProperties("app/keys/release/keystore.properties")
+    if (releaseKeystore != null) {
+        signingConfigs.release.storeFile = file(releaseKeystore['storeFile'])
+        signingConfigs.release.storePassword = releaseKeystore['storePassword']
+        signingConfigs.release.keyAlias = releaseKeystore['keyAlias']
+        signingConfigs.release.keyPassword = releaseKeystore['keyPassword']
+    }
+
+    def uploadKeystore = getProperties("app/keys/upload/keystore.properties")
+    if (uploadKeystore != null) {
+        signingConfigs.upload.storeFile = file(uploadKeystore['storeFile'])
+        signingConfigs.upload.storePassword = uploadKeystore['storePassword']
+        signingConfigs.upload.keyAlias = uploadKeystore['keyAlias']
+        signingConfigs.upload.keyPassword = uploadKeystore['keyPassword']
+    }
 
     buildTypes {
         debug {
             applicationIdSuffix '.debug'
             versionNameSuffix ".X"
             debuggable true
+            minifyEnabled false
         }
         release {
             signingConfig signingConfigs.release
@@ -51,6 +63,10 @@ android {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'),
                     'src/main/proguard-project.txt'
+        }
+        upload {
+            initWith release
+            signingConfig signingConfigs.upload
         }
     }
 }
