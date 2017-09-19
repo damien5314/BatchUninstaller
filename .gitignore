@@ -10,3 +10,4 @@ projectFilesBackup/
 # Internal keys
 app/fabric.properties
 app/keys/release
+app/keys/upload
