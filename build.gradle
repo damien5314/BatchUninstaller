@@ -10,7 +10,7 @@ buildscript {
         SUPPORT_LIBRARY_VERSION = '26.1.0'
         KOTLIN_VERSION = '1.2.41'
 
-        RXJAVA2_VERSION = '2.0.8'
+        RXJAVA2_VERSION = '2.1.13'
         RXJAVA2_ANDROID_VERSION = '2.0.1'
         TIMBER_VERSION = '4.7.0'
         RECYCLERVIEW_MULTISELECT_VERSION = '0.2'
