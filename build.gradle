@@ -9,7 +9,6 @@ buildscript {
 
         SUPPORT_LIBRARY_VERSION = '26.1.0'
         KOTLIN_VERSION = '1.2.41'
-        ANKO_VERSION = "0.8.2"
 
         RXJAVA2_VERSION = '2.0.8'
         RXJAVA2_ANDROID_VERSION = '2.0.1'
