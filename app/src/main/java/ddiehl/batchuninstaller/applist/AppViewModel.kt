@@ -21,8 +21,8 @@ data class AppViewModel(
 
     override fun writeToParcel(p0: Parcel, p1: Int) {
         p0.writeString(name)
-        p0.writeLong(installationDate)
         p0.writeString(packageName)
+        p0.writeLong(installationDate)
         p0.writeLong(size)
     }
 
