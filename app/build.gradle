@@ -61,8 +61,7 @@ android {
             signingConfig signingConfigs.release
             debuggable false
             minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'),
-                    'src/main/proguard-project.txt'
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         upload {
             initWith release
