@@ -82,9 +82,9 @@ class AppListActivity : AppCompatActivity(), AppListView {
         super.onSaveInstanceState(outState)
 
         val selectedPackages =
-                multiSelector.selectedPositions.map { position -> appList[position] }
-                        .map { app -> app.packageName }
-                        .toTypedArray()
+            multiSelector.selectedPositions.map { position -> appList[position] }
+                .map { app -> app.packageName }
+                .toTypedArray()
 
         outState.putStringArray(STATE_SELECTED_PACKAGES, selectedPackages)
         outState.putParcelable(STATE_PENDING_UNINSTALL, appUninstallRequested)
@@ -178,7 +178,8 @@ class AppListActivity : AppCompatActivity(), AppListView {
         }
 
         if (resultSuccessful(data)) {
-            val appViewModel = appUninstallRequested ?: throw NullPointerException("No app was pending uninstall")
+            val appViewModel =
+                appUninstallRequested ?: throw NullPointerException("No app was pending uninstall")
             val removedApp = appList.find { viewModel ->
                 viewModel.packageName == appViewModel.packageName
             }
@@ -197,5 +198,5 @@ class AppListActivity : AppCompatActivity(), AppListView {
     }
 
     private fun resultSuccessful(data: Intent?) =
-            data != null && data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
+        data != null && data.extras.getInt(EXTRA_INSTALL_RESULT) == EXTRA_UNINSTALL_RESULT_SUCCESS
 }

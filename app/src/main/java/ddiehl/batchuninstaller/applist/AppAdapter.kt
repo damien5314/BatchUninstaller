@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import com.bignerdranch.android.multiselector.MultiSelector
 
 class AppAdapter(
-        private val appListView: AppListView,
-        private val multiSelector: MultiSelector
+    private val appListView: AppListView,
+    private val multiSelector: MultiSelector
 ) : RecyclerView.Adapter<AppViewHolder>() {
 
     override fun getItemCount(): Int = appListView.appList.size
@@ -20,7 +20,7 @@ class AppAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AppViewHolder {
         val view = LayoutInflater.from(parent.context)
-                .inflate(AppViewHolder.LAYOUT_RES_ID, parent, false)
+            .inflate(AppViewHolder.LAYOUT_RES_ID, parent, false)
 
         return AppViewHolder(view, multiSelector)
     }

@@ -22,23 +22,23 @@ interface AppDataLoader {
                 val packageList = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES)
 
                 val apps = packageList
-                        .asSequence()
-                        .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
-                        .filter { pkg -> packageManager.getLaunchIntentForPackage(pkg.packageName) != null }
-                        .map { pkg -> pkg.packageName }
-                        .map { packageName ->
-                            val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
-                            val label = packageManager.getApplicationLabel(applicationInfo)
-                            val installationDate = packageManager.getInstallationTime(packageName)
-                            AppViewModel(
-                                    name = label ?: "",
-                                    packageName = packageName,
-                                    installationDate = installationDate,
-                                    size = 0
-                            )
-                        }
-                        .sortedBy { it.name }
-                        .toList()
+                    .asSequence()
+                    .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
+                    .filter { pkg -> packageManager.getLaunchIntentForPackage(pkg.packageName) != null }
+                    .map { pkg -> pkg.packageName }
+                    .map { packageName ->
+                        val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
+                        val label = packageManager.getApplicationLabel(applicationInfo)
+                        val installationDate = packageManager.getInstallationTime(packageName)
+                        AppViewModel(
+                            name = label ?: "",
+                            packageName = packageName,
+                            installationDate = installationDate,
+                            size = 0
+                        )
+                    }
+                    .sortedBy { it.name }
+                    .toList()
 
                 Observable.just(apps)
             }

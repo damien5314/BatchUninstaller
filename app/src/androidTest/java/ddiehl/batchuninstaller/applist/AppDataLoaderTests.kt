@@ -8,7 +8,8 @@ class AppDataLoaderTests {
 
     private fun getAppDataLoader() = AppDataLoader.Impl(FakePackageManager())
 
-    @Test fun getApps_verifyCorrectCountIsReturned() {
+    @Test
+    fun getApps_verifyCorrectCountIsReturned() {
         val appDataLoader = getAppDataLoader()
 
         val observer = appDataLoader.getApps().test()
@@ -19,7 +20,8 @@ class AppDataLoaderTests {
         observer.assertComplete()
     }
 
-    @Test fun getApps_verifySortedByName() {
+    @Test
+    fun getApps_verifySortedByName() {
         val appDataLoader = getAppDataLoader()
 
         val observer = appDataLoader.getApps().test()

@@ -4,19 +4,19 @@ import android.os.Parcel
 import android.os.Parcelable
 
 data class AppViewModel(
-        val name: String,
-        val packageName: String,
-        val installationDate: Long,
-        var size: Long
+    val name: String,
+    val packageName: String,
+    val installationDate: Long,
+    var size: Long
 ) : Parcelable {
 
     //region Parcelable
 
     constructor(parcel: Parcel) : this(
-            parcel.readString(),
-            parcel.readString(),
-            parcel.readLong(),
-            parcel.readLong()
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readLong(),
+        parcel.readLong()
     )
 
     override fun writeToParcel(p0: Parcel, p1: Int) {
