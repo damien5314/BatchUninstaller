@@ -183,10 +183,12 @@ class AppListActivity : AppCompatActivity(), AppListView {
                 viewModel.packageName == appViewModel.packageName
             }
             val indexRemoved = appList.indexOf(removedApp)
-            multiSelector.setSelected(indexRemoved, 0, false)
-            appList.removeAt(indexRemoved)
-            multiSelector.itemRemoved(indexRemoved)
-            adapter.notifyItemRemoved(indexRemoved)
+            if (indexRemoved >= 0) {
+                multiSelector.setSelected(indexRemoved, 0, false)
+                appList.removeAt(indexRemoved)
+                multiSelector.itemRemoved(indexRemoved)
+                adapter.notifyItemRemoved(indexRemoved)
+            }
         }
 
         Handler().post {
