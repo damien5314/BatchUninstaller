@@ -6,10 +6,10 @@ import android.text.format.Formatter
 
 fun formatInstallationDate(timestamp: Long): String {
     return DateUtils.getRelativeTimeSpanString(
-            timestamp,
-            System.currentTimeMillis(),
-            DateUtils.HOUR_IN_MILLIS,
-            0
+        timestamp,
+        System.currentTimeMillis(),
+        DateUtils.HOUR_IN_MILLIS,
+        0
     ).toString()
 }
 

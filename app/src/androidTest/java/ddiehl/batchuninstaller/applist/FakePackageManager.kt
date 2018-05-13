@@ -20,17 +20,17 @@ class FakePackageManager : IPackageManager {
 
     override fun getInstalledPackages(type: Int): List<IPackageInfo> {
         return TestPackages.values()
-                .map { testPackages -> APackageInfo(testPackages.packageName) }
+            .map { testPackages -> APackageInfo(testPackages.packageName) }
     }
 
     override fun getLaunchIntentForPackage(packageName: String): IIntent? {
         if (TestPackages.values().find { pkg -> pkg.packageName == packageName } != null) {
-            return object : IIntent { }
+            return object : IIntent {}
         } else return null
     }
 
-    override fun getApplicationInfo(name: String, flags: Int): IApplicationInfo
-            = FakeApplicationInfo(name)
+    override fun getApplicationInfo(name: String, flags: Int): IApplicationInfo =
+        FakeApplicationInfo(name)
 
     override fun getApplicationLabel(applicationInfo: IApplicationInfo): String? {
         if (applicationInfo !is FakeApplicationInfo) {
@@ -38,10 +38,11 @@ class FakePackageManager : IPackageManager {
         }
 
         val pkg = TestPackages.values()
-                .find { info -> info.packageName == applicationInfo.packageName }
+            .find { info -> info.packageName == applicationInfo.packageName }
 
         return pkg?.displayName
     }
+
     override fun getInstallationTime(packageName: String): Long {
         return System.currentTimeMillis()
     }

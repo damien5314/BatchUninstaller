@@ -10,7 +10,7 @@ class APackageManager(private val packageManager: PackageManager) : IPackageMana
 
     override fun getInstalledPackages(type: Int): List<IPackageInfo> {
         return packageManager.getInstalledPackages(type)
-                .map { APackageInfo(it.packageName) }
+            .map { APackageInfo(it.packageName) }
     }
 
     override fun getLaunchIntentForPackage(packageName: String): IIntent? {
@@ -34,6 +34,6 @@ class APackageManager(private val packageManager: PackageManager) : IPackageMana
 
     override fun getInstallationTime(packageName: String): Long {
         return packageManager.getPackageInfo(packageName, 0)
-                .firstInstallTime
+            .firstInstallTime
     }
 }

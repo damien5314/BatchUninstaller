@@ -6,7 +6,7 @@ import io.reactivex.schedulers.Schedulers
 import timber.log.Timber
 
 class AppListActivityPresenter(
-        private val appDataLoader: AppDataLoader
+    private val appDataLoader: AppDataLoader
 ) {
 
     private var appListView: AppListView? = null
@@ -24,14 +24,14 @@ class AppListActivityPresenter(
 
     private fun loadApplicationData() {
         appDataLoader.getApps()
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe {
-                    subscriptions.add(it)
-                    appListView?.showSpinner()
-                }
-                .doFinally { appListView?.dismissSpinner() }
-                .subscribe(this::onAppsLoaded, this::onAppsLoadError)
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe {
+                subscriptions.add(it)
+                appListView?.showSpinner()
+            }
+            .doFinally { appListView?.dismissSpinner() }
+            .subscribe(this::onAppsLoaded, this::onAppsLoadError)
     }
 
     private fun onAppsLoaded(apps: List<AppViewModel>) {

@@ -14,8 +14,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class AppViewHolder(
-        view: View,
-        private val multiSelector: MultiSelector
+    view: View,
+    private val multiSelector: MultiSelector
 ) : MultiSelectorBindingHolder(view, multiSelector), View.OnClickListener {
 
     companion object {
@@ -44,15 +44,15 @@ class AppViewHolder(
         checkbox.isChecked = isSelected
 
         getAppIcon(app)
-                .subscribeOn(Schedulers.computation())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doOnSubscribe { icon.setImageDrawable(null) }
-                .subscribe { icon.setImageDrawable(it) }
+            .subscribeOn(Schedulers.computation())
+            .observeOn(AndroidSchedulers.mainThread())
+            .doOnSubscribe { icon.setImageDrawable(null) }
+            .subscribe { icon.setImageDrawable(it) }
     }
 
     private fun getAppIcon(appViewModel: AppViewModel) = Maybe.defer {
         val applicationIcon = itemView.context.packageManager
-                .getApplicationIcon(appViewModel.packageName)
+            .getApplicationIcon(appViewModel.packageName)
         applicationIcon?.let { Maybe.just(it) } ?: Maybe.empty()
     }
 
