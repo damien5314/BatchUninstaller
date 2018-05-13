@@ -12,6 +12,7 @@ import ddiehl.batchuninstaller.utils.formatFileSize
 import io.reactivex.Maybe
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import timber.log.Timber
 
 class AppViewHolder(
     view: View,
@@ -47,7 +48,7 @@ class AppViewHolder(
             .subscribeOn(Schedulers.computation())
             .observeOn(AndroidSchedulers.mainThread())
             .doOnSubscribe { icon.setImageDrawable(null) }
-            .subscribe { icon.setImageDrawable(it) }
+            .subscribe(icon::setImageDrawable, Timber::e)
     }
 
     private fun getAppIcon(appViewModel: AppViewModel) = Maybe.defer {
