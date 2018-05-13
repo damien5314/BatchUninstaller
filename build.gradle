@@ -1,6 +1,6 @@
 buildscript {
     ext {
-        ANDROID_GRADLE_PLUGIN = '3.0.1'
+        ANDROID_GRADLE_PLUGIN = '3.1.0'
         FABRIC_PLUGIN_VERSION = '1.25.4'
         CRASHLYTICS_VERSION = '2.9.2'
         BUILD_TOOLS_VERSION = '26.0.2'
@@ -28,6 +28,7 @@ buildscript {
     }
 
     dependencies {
+        // https://developer.android.com/studio/releases/gradle-plugin
         classpath "com.android.tools.build:gradle:$ANDROID_GRADLE_PLUGIN"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$KOTLIN_VERSION"
         // https://docs.fabric.io/android/changelog.html#fabric-gradle-plugin
