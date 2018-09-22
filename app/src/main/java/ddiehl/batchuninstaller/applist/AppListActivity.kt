@@ -81,8 +81,8 @@ class AppListActivity : AppCompatActivity(), AppListView {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val selectedPackages =
-            multiSelector.selectedPositions.map { position -> appList[position] }
+        val selectedPackages = multiSelector.selectedPositions
+                .map { position -> appList[position] }
                 .map { app -> app.packageName }
                 .toTypedArray()
 
