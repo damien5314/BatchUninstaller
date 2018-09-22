@@ -3,6 +3,7 @@
     package="ddiehl.batchuninstaller">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
 
     <application
         android:name=".BatchUninstallerApp"
