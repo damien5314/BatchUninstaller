@@ -36,12 +36,17 @@ class AppListActivity : AppCompatActivity(), AppListView {
 
     private lateinit var appListActivityPresenter: AppListActivityPresenter
     private lateinit var adapter: AppAdapter
-    private lateinit var loadingOverlay: ProgressDialog
+    private val loadingOverlay: ProgressDialog by lazy {
+        ProgressDialog(this, R.style.ProgressDialog).apply {
+            setCancelable(false)
+            setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        }
+    }
     private val multiSelector = MultiSelector()
 
     override val appList = mutableListOf<AppViewModel>()
     private val uninstallQueue: Queue<AppViewModel> = LinkedList()
-    private var selectedPackages: Array<String>? = null
+    private var cachedSelectedPackages: Array<String>? = null
     private var appUninstallRequested: AppViewModel? = null
 
     override fun onCreate(state: Bundle?) {
@@ -52,17 +57,13 @@ class AppListActivity : AppCompatActivity(), AppListView {
         setTitle(R.string.app_name)
 
         state?.let {
-            selectedPackages = state.getStringArray(STATE_SELECTED_PACKAGES)
+            cachedSelectedPackages = state.getStringArray(STATE_SELECTED_PACKAGES)
             appUninstallRequested = state.getParcelable(STATE_PENDING_UNINSTALL)
         }
 
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = AppAdapter(this, multiSelector)
         recyclerView.adapter = adapter
-
-        loadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
-        loadingOverlay.setCancelable(false)
-        loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
 
         val appDataLoader = AppDataLoader.Impl(APackageManager(packageManager))
         appListActivityPresenter = AppListActivityPresenter(appDataLoader)
@@ -81,8 +82,8 @@ class AppListActivity : AppCompatActivity(), AppListView {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
 
-        val selectedPackages =
-            multiSelector.selectedPositions.map { position -> appList[position] }
+        val selectedPackages = multiSelector.selectedPositions
+                .map { position -> appList[position] }
                 .map { app -> app.packageName }
                 .toTypedArray()
 
@@ -95,14 +96,15 @@ class AppListActivity : AppCompatActivity(), AppListView {
     override fun showApps(apps: List<AppViewModel>) {
         appList.clear()
         appList.addAll(apps)
+        multiSelector.clearSelections()
 
-        selectedPackages?.let { packages ->
+        cachedSelectedPackages?.let { packages ->
             appList.forEachIndexed { index, appViewModel ->
                 if (packages.contains(appViewModel.packageName)) {
                     multiSelector.setSelected(index, 0, true)
                 }
             }
-            selectedPackages = null
+            cachedSelectedPackages = null
         }
 
         adapter.notifyDataSetChanged()
@@ -185,8 +187,8 @@ class AppListActivity : AppCompatActivity(), AppListView {
             }
             val indexRemoved = appList.indexOf(removedApp)
             if (indexRemoved >= 0) {
-                multiSelector.setSelected(indexRemoved, 0, false)
                 appList.removeAt(indexRemoved)
+                multiSelector.setSelected(indexRemoved, 0, false)
                 multiSelector.itemRemoved(indexRemoved)
                 adapter.notifyItemRemoved(indexRemoved)
             }
