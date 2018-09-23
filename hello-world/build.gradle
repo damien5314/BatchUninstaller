@@ -36,7 +36,7 @@ android {
             signingConfig signingConfigs.debug
             debuggable true
             minifyEnabled false
-            applicationIdSuffix ".${getAppName()}"
+            applicationIdSuffix ".${getAppIdSuffix()}"
             resValue "string", "generated_app_name", "${getAppName()}"
         }
     }
@@ -56,4 +56,9 @@ private String getAppName() {
     } else {
         return "Hello World"
     }
+}
+
+private String getAppIdSuffix() {
+    def appName = getAppName()
+    return appName.replaceAll("[^a-zA-Z\\d:]", "")
 }
