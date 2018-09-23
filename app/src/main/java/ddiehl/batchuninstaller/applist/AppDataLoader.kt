@@ -3,6 +3,7 @@ package ddiehl.batchuninstaller.applist
 import android.content.pm.PackageManager
 import ddiehl.batchuninstaller.model.appinfo.IPackageManager
 import io.reactivex.Observable
+import java.text.Collator
 
 interface AppDataLoader {
 
@@ -15,6 +16,12 @@ interface AppDataLoader {
 
         companion object {
             private const val ANDROID_PACKAGE_PREFIX = "com.android"
+            private val COLLATOR = Collator.getInstance().apply {
+                strength = Collator.PRIMARY
+            }
+            private val COMPARATOR = Comparator<AppViewModel> { o1, o2 ->
+                COLLATOR.compare(o1.name, o2.name)
+            }
         }
 
         override fun getApps(): Observable<List<AppViewModel>> {
@@ -37,7 +44,7 @@ interface AppDataLoader {
                             size = 0
                         )
                     }
-                    .sortedBy { it.name }
+                    .sortedWith(COMPARATOR)
                     .toList()
 
                 Observable.just(apps)
