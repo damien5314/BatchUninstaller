@@ -100,6 +100,7 @@ class AppListActivity : AppCompatActivity(), AppListView {
     override fun showApps(apps: List<AppViewModel>) {
         appList.clear()
         appList.addAll(apps)
+        multiSelector.clearSelections()
 
         cachedSelectedPackages?.let { packages ->
             appList.forEachIndexed { index, appViewModel ->
