@@ -50,8 +50,8 @@ dependencies {
 }
 
 private String getAppName() {
-    if (project.hasProperty("myappname")) {
-        return project.myappname
+    if (project.hasProperty("appname")) {
+        return project.appname
     } else {
         return "Hello World"
     }
