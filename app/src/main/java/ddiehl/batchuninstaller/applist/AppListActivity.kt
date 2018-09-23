@@ -47,7 +47,7 @@ class AppListActivity : AppCompatActivity(), AppListView {
 
     override val appList = mutableListOf<AppViewModel>()
     private val uninstallQueue: Queue<AppViewModel> = LinkedList()
-    private var selectedPackages: Array<String>? = null
+    private var cachedSelectedPackages: Array<String>? = null
     private var appUninstallRequested: AppViewModel? = null
 
     override fun onCreate(state: Bundle?) {
@@ -58,7 +58,7 @@ class AppListActivity : AppCompatActivity(), AppListView {
         setTitle(R.string.app_name)
 
         state?.let {
-            selectedPackages = state.getStringArray(STATE_SELECTED_PACKAGES)
+            cachedSelectedPackages = state.getStringArray(STATE_SELECTED_PACKAGES)
             appUninstallRequested = state.getParcelable(STATE_PENDING_UNINSTALL)
         }
 
@@ -101,13 +101,13 @@ class AppListActivity : AppCompatActivity(), AppListView {
         appList.clear()
         appList.addAll(apps)
 
-        selectedPackages?.let { packages ->
+        cachedSelectedPackages?.let { packages ->
             appList.forEachIndexed { index, appViewModel ->
                 if (packages.contains(appViewModel.packageName)) {
                     multiSelector.setSelected(index, 0, true)
                 }
             }
-            selectedPackages = null
+            cachedSelectedPackages = null
         }
 
         adapter.notifyDataSetChanged()
