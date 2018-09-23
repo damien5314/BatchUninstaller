@@ -1,0 +1,64 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
+
+repositories {
+    google()
+    jcenter()
+}
+
+android {
+    compileSdkVersion COMPILE_SDK_VERSION
+
+    defaultConfig {
+        applicationId "ddiehl.android.helloworld"
+        minSdkVersion 21
+        targetSdkVersion TARGET_SDK_VERSION
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('keys/debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release.initWith(debug)
+        upload.initWith(debug)
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            debuggable true
+            minifyEnabled false
+            applicationIdSuffix ".${getAppIdSuffix()}"
+            resValue "string", "generated_app_name", "${getAppName()}"
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$KOTLIN_VERSION"
+
+    testImplementation 'junit:junit:4.12'
+    androidTestImplementation 'com.android.support.test:runner:1.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+}
+
+private String getAppName() {
+    if (project.hasProperty("appname")) {
+        return project.appname
+    } else {
+        return "Hello World"
+    }
+}
+
+private String getAppIdSuffix() {
+    def appName = getAppName()
+    return appName.replaceAll("[^a-zA-Z\\d:]", "")
+}
