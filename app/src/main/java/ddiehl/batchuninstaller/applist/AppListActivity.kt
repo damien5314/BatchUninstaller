@@ -19,7 +19,6 @@ import ddiehl.batchuninstaller.utils.itemRemoved
 import ddiehl.batchuninstaller.utils.setBackgroundColor
 import ddiehl.batchuninstaller.utils.tintAllIcons
 import kotlinx.android.synthetic.main.app_list_activity.*
-import timber.log.Timber
 import java.util.*
 
 class AppListActivity : AppCompatActivity(), AppListView {
@@ -82,9 +81,6 @@ class AppListActivity : AppCompatActivity(), AppListView {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
-        Timber.d("[dcd] appList.size = ${appList.size}")
-        Timber.d("[dcd] multiSelector.selectedPositions = ${multiSelector.selectedPositions}")
 
         val selectedPackages = multiSelector.selectedPositions
                 .map { position -> appList[position] }
