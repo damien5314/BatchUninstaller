@@ -191,8 +191,8 @@ class AppListActivity : AppCompatActivity(), AppListView {
             }
             val indexRemoved = appList.indexOf(removedApp)
             if (indexRemoved >= 0) {
-                multiSelector.setSelected(indexRemoved, 0, false)
                 appList.removeAt(indexRemoved)
+                multiSelector.setSelected(indexRemoved, 0, false)
                 multiSelector.itemRemoved(indexRemoved)
                 adapter.notifyItemRemoved(indexRemoved)
             }
