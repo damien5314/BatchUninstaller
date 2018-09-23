@@ -37,7 +37,12 @@ class AppListActivity : AppCompatActivity(), AppListView {
 
     private lateinit var appListActivityPresenter: AppListActivityPresenter
     private lateinit var adapter: AppAdapter
-    private lateinit var loadingOverlay: ProgressDialog
+    private val loadingOverlay: ProgressDialog by lazy {
+        ProgressDialog(this, R.style.ProgressDialog).apply {
+            setCancelable(false)
+            setProgressStyle(ProgressDialog.STYLE_SPINNER)
+        }
+    }
     private val multiSelector = MultiSelector()
 
     override val appList = mutableListOf<AppViewModel>()
@@ -60,10 +65,6 @@ class AppListActivity : AppCompatActivity(), AppListView {
         recyclerView.layoutManager = LinearLayoutManager(this)
         adapter = AppAdapter(this, multiSelector)
         recyclerView.adapter = adapter
-
-        loadingOverlay = ProgressDialog(this, R.style.ProgressDialog)
-        loadingOverlay.setCancelable(false)
-        loadingOverlay.setProgressStyle(ProgressDialog.STYLE_SPINNER)
 
         val appDataLoader = AppDataLoader.Impl(APackageManager(packageManager))
         appListActivityPresenter = AppListActivityPresenter(appDataLoader)
