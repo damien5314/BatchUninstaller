@@ -2,7 +2,6 @@ package ddiehl.batchuninstaller.applist
 
 import android.content.pm.PackageManager
 import ddiehl.batchuninstaller.model.appinfo.IPackageManager
-import io.reactivex.Observable
 import java.text.Collator
 
 interface AppDataLoader {
@@ -10,7 +9,7 @@ interface AppDataLoader {
     /**
      * Returns a list of apps installed in the passed [IPackageManager].
      */
-    fun getApps(): Observable<List<AppViewModel>>
+    suspend fun getApps(): List<AppViewModel>
 
     class Impl(private val packageManager: IPackageManager) : AppDataLoader {
 
@@ -24,31 +23,27 @@ interface AppDataLoader {
             }
         }
 
-        override fun getApps(): Observable<List<AppViewModel>> {
-            return Observable.defer {
-                val packageList = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES)
+        override suspend fun getApps(): List<AppViewModel> {
+            val packageList = packageManager.getInstalledPackages(PackageManager.GET_ACTIVITIES)
 
-                val apps = packageList
-                    .asSequence()
-                    .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
-                    .filter { pkg -> packageManager.getLaunchIntentForPackage(pkg.packageName) != null }
-                    .map { pkg -> pkg.packageName }
-                    .map { packageName ->
-                        val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
-                        val label = packageManager.getApplicationLabel(applicationInfo)
-                        val installationDate = packageManager.getInstallationTime(packageName)
-                        AppViewModel(
-                            name = label ?: "",
-                            packageName = packageName,
-                            installationDate = installationDate,
-                            size = 0
-                        )
-                    }
-                    .sortedWith(COMPARATOR)
-                    .toList()
-
-                Observable.just(apps)
-            }
+            return packageList
+                .asSequence()
+                .filter { pkg -> !pkg.packageName.startsWith(ANDROID_PACKAGE_PREFIX) }
+                .filter { pkg -> packageManager.getLaunchIntentForPackage(pkg.packageName) != null }
+                .map { pkg -> pkg.packageName }
+                .map { packageName ->
+                    val applicationInfo = packageManager.getApplicationInfo(packageName, 0)
+                    val label = packageManager.getApplicationLabel(applicationInfo)
+                    val installationDate = packageManager.getInstallationTime(packageName)
+                    AppViewModel(
+                        name = label ?: "",
+                        packageName = packageName,
+                        installationDate = installationDate,
+                        size = 0
+                    )
+                }
+                .sortedWith(COMPARATOR)
+                .toList()
         }
     }
 }

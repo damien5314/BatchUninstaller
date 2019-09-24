@@ -1,16 +1,19 @@
 package ddiehl.batchuninstaller.applist
 
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.*
 import timber.log.Timber
 
 class AppListActivityPresenter(
     private val appDataLoader: AppDataLoader
 ) {
 
+    companion object {
+        private val parentJob = Job()
+        private val coroutineScope = CoroutineScope(Dispatchers.Main + parentJob)
+    }
+
     private var appListView: AppListView? = null
-    private val subscriptions = CompositeDisposable()
+    private var loadAppsAsync: Job? = null
 
     fun onViewAttached(view: AppListView) {
         appListView = view
@@ -18,20 +21,21 @@ class AppListActivityPresenter(
     }
 
     fun onViewDetached(view: AppListView) {
-        subscriptions.clear()
+        loadAppsAsync?.cancel()
         appListView = null
     }
 
     private fun loadApplicationData() {
-        appDataLoader.getApps()
-            .subscribeOn(Schedulers.computation())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe {
-                subscriptions.add(it)
-                appListView?.showSpinner()
-            }
-            .doFinally { appListView?.dismissSpinner() }
-            .subscribe(this::onAppsLoaded, this::onAppsLoadError)
+        val deferred = coroutineScope.async { appDataLoader.getApps() }
+
+        appListView?.showSpinner()
+
+        loadAppsAsync = coroutineScope.launch(Dispatchers.Main) {
+            appListView?.dismissSpinner()
+
+            val apps = deferred.await()
+            onAppsLoaded(apps)
+        }
     }
 
     private fun onAppsLoaded(apps: List<AppViewModel>) {
