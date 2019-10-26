@@ -1,13 +1,13 @@
 buildscript {
     ext {
-        ANDROID_GRADLE_PLUGIN = '3.1.0'
+        ANDROID_GRADLE_PLUGIN = '3.5.1'
         FABRIC_PLUGIN_VERSION = '1.26.0'
         CRASHLYTICS_VERSION = '2.9.2'
         COMPILE_SDK_VERSION = 28
         TARGET_SDK_VERSION = 28
 
         SUPPORT_LIBRARY_VERSION = '28.0.0'
-        KOTLIN_VERSION = '1.2.61'
+        KOTLIN_VERSION = '1.3.10'
 
         RXJAVA2_VERSION = '2.1.13'
         RXJAVA2_ANDROID_VERSION = '2.0.1'
