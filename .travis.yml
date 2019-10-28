@@ -2,6 +2,8 @@ language: android
 dist: trusty
 before_install:
   - echo yes | sdkmanager "build-tools;28.0.3"
+script:
+  - gw :app:build :app:connectedCheck
 android:
   components:
     # Uncomment the lines below if you want to
